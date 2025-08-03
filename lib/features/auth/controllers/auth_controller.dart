@@ -1,69 +1,60 @@
 // File: lib/features/auth/controllers/auth_controller.dart
 
 import 'package:frontend_v2/features/auth/data/auth_service.dart';
-import 'package:dio/dio.dart';
+import 'package:frontend_v2/core/services/secure_storage_service.dart';
 
 class AuthController {
   final AuthService _service;
+  final SecureStorageService _storage;
 
-  AuthController({ required AuthService service }) : _service = service;
+  AuthController({
+    required AuthService service,
+    required SecureStorageService storage,
+  })  : _service = service,
+        _storage = storage;
 
-  /// Attempts to log in. Returns true on HTTP 200 + non‐empty token, false otherwise.
-  Future<bool> login({
+  /// Attempts to log in. Returns true if login succeeded (and token was stored).
+  Future<Map<String, dynamic>> login({
+    required String email,
+    required String password,
+  }) async {
+    return await _service.login(email: email, password: password);
+  }
+
+
+  Future<Map<String, dynamic>?> verifyMFA(String code) {
+    return _service.verifyMFA(code);
+  }
+
+
+  /// Attempts to register. Returns true on HTTP 200/201, false otherwise.
+  Future<bool> register({
+    required String firstName,
+    required String lastName,
     required String email,
     required String password,
   }) async {
     try {
-      final Response response = await _service.login(
+      final resp = await _service.register(
+        firstName: firstName,
+        lastName: lastName,
         email: email,
         password: password,
       );
-
-
-      if (response.statusCode == 200) {
-        final data = response.data as Map<String, dynamic>?;
-        if (data == null) {
-          return false;
-        }
-        final token = data['token'] as String?;
-        if (token == null || token.isEmpty) {
-          return false;
-        }
-
-        // TODO: Persist `token` somewhere (e.g. FlutterSecureStorage)
-        // Example:
-        // await secureStorage.write(key: 'auth_token', value: token);
-
-        return true;
-      } else {
-        return false;
-      }
+      return resp.statusCode == 200 || resp.statusCode == 201;
     } catch (_) {
       return false;
     }
   }
 
-  /// Attempts to register. Returns true on HTTP 200/201, false otherwise.
-  Future<bool> register({
-    required String fullName,
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final Response response = await _service.register(
-        fullName: fullName,
-        email: email,
-        password: password,
-      );
+  /// Logs out by clearing the stored token (and any onboarding flag).
+  Future<void> logout() async {
+    await _service.clearToken();                         // removes access_token
+    await _storage.delete(key: 'onboarded');             // optional: clear onboard flag
+  }
 
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (_) {
-      return false;
-    }
+  /// Retrieves the raw JWT, if stored.
+  Future<String?> getToken() {
+    return _storage.read(key: 'access_token');
   }
 }

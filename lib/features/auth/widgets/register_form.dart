@@ -4,8 +4,10 @@ import 'custom_text_form_field.dart';
 import 'gradient_button.dart';
 
 class RegisterForm extends StatelessWidget {
-  final TextEditingController nameController;
+  // final TextEditingController nameController;
   final TextEditingController emailController;
+  final TextEditingController firstNameController;
+  final TextEditingController lastNameController;
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
   final bool showPassword;
@@ -15,7 +17,9 @@ class RegisterForm extends StatelessWidget {
 
   const RegisterForm({
     super.key,
-    required this.nameController,
+    // required this.nameController,
+    required this.firstNameController,
+    required this.lastNameController,
     required this.emailController,
     required this.passwordController,
     required this.confirmPasswordController,
@@ -32,11 +36,19 @@ class RegisterForm extends StatelessWidget {
       children: [
         // ─── Full Name ─────────────────────────────────────
         CustomTextFormField(
-          label: 'Full Name',
-          controller: nameController,
-          hintText: 'Jone Doe',
+          label: 'First Name',
+          controller: firstNameController,
+          hintText: 'John',
           prefixIcon: Icons.person,
         ),
+        const SizedBox(height: 16),
+        CustomTextFormField(
+          label: 'Last Name',
+          controller: lastNameController,
+          hintText: 'Doe',
+          prefixIcon: Icons.person,
+        ),
+
         const SizedBox(height: 16),
 
         // ─── Email ─────────────────────────────────────────

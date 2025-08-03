@@ -8,8 +8,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend_v2/core/theme/app_colors.dart';
 import 'package:frontend_v2/features/auth/data/auth_service.dart';
 import 'package:frontend_v2/features/auth/controllers/auth_controller.dart';
+import 'package:frontend_v2/core/services/secure_storage_service.dart';
+import 'package:frontend_v2/features/auth/screens/verify_mfa_screen.dart';
 import 'package:frontend_v2/features/auth/widgets/login_form.dart';
 import 'package:frontend_v2/features/auth/widgets/register_form.dart';
+import 'package:frontend_v2/features/home/screens/dashboard_screen.dart';
+import 'package:frontend_v2/features/onboarding/screens/onboarding_screen.dart';
+
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -28,7 +33,8 @@ class _AuthScreenState extends State<AuthScreen>
   final TextEditingController _loginPasswordController = TextEditingController();
 
   // Register form controllers
-  final TextEditingController _registerNameController            = TextEditingController();
+  final TextEditingController _registerFirstNameController = TextEditingController();
+  final TextEditingController _registerLastNameController = TextEditingController();
   final TextEditingController _registerEmailController           = TextEditingController();
   final TextEditingController _registerPasswordController        = TextEditingController();
   final TextEditingController _registerConfirmPasswordController = TextEditingController();
@@ -48,7 +54,14 @@ class _AuthScreenState extends State<AuthScreen>
     // 2) Instantiate AuthService → AuthController
     final baseUrl = dotenv.env['API_BASE_URL'] ?? '';
     final service = AuthService(baseUrl: baseUrl);
-    _authController = AuthController(service: service);
+    final secureStorage = SecureStorageService();
+
+
+    _authController = AuthController(
+         service: service,
+         storage: secureStorage,
+    );
+
   }
 
   @override
@@ -56,7 +69,8 @@ class _AuthScreenState extends State<AuthScreen>
     _tabController.dispose();
     _loginEmailController.dispose();
     _loginPasswordController.dispose();
-    _registerNameController.dispose();
+    _registerFirstNameController.dispose();
+    _registerLastNameController.dispose();
     _registerEmailController.dispose();
     _registerPasswordController.dispose();
     _registerConfirmPasswordController.dispose();
@@ -65,56 +79,100 @@ class _AuthScreenState extends State<AuthScreen>
 
   /// Calls AuthController.login, shows toast & manages loading state
   Future<void> _handleLogin() async {
-    final email    = _loginEmailController.text.trim();
+    final email = _loginEmailController.text.trim();
     final password = _loginPasswordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      Fluttertoast.showToast(
-        msg: 'Please enter both email and password',
-        toastLength: Toast.LENGTH_SHORT,
-      );
+      Fluttertoast.showToast(msg: 'Please enter both email and password');
       return;
     }
 
     setState(() => _loginLoading = true);
 
     try {
-      final success = await _authController.login(
-        email: email,
-        password: password,
-      );
+      final response = await _authController.login(email: email, password: password);
+      if (!mounted) return;
 
+      final secureStorage = SecureStorageService();
 
-      if (success) {
-        Fluttertoast.showToast(
-          msg: 'Welcome back!',
-          toastLength: Toast.LENGTH_SHORT,
+      // If MFA required
+      if (response['message'] == 'MFA code sent to email') {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => VerifyMFAScreen(
+              mfaEmail: email,
+              nextScreen: OnboardingScreen(
+                onComplete: () async {
+                  await secureStorage.write(key: 'onboarded', value: 'true');
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                  );
+                },
+              ),
+              onBack: (ctx) {
+                Navigator.of(ctx).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const AuthScreen()),
+                );
+              },
+            ),
+          ),
         );
-        // TODO: Navigate to your home/dashboard screen
+        return;
+      }
+
+      // No MFA — expect onboarded + token in response
+      final token = response['token'];
+      final onboarded = response['onboarded'] ?? false;
+
+      if (token != null) {
+        await secureStorage.write(key: 'auth_token', value: token);
+        await secureStorage.write(key: 'onboarded', value: onboarded.toString());
+
+        if (onboarded == true) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const DashboardScreen()),
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => OnboardingScreen(
+                onComplete: () async {
+                  await secureStorage.write(key: 'onboarded', value: 'true');
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                  );
+                },
+              ),
+            ),
+          );
+        }
       } else {
-        Fluttertoast.showToast(
-          msg: 'Login failed. Please try again.',
-          toastLength: Toast.LENGTH_SHORT,
-        );
+        Fluttertoast.showToast(msg: 'Login failed. Please try again.');
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: 'Login error. Please try again.',
-        toastLength: Toast.LENGTH_SHORT,
-      );
+      Fluttertoast.showToast(msg: 'Login error. Please try again.');
     } finally {
-      setState(() => _loginLoading = false);
+      if (mounted) setState(() => _loginLoading = false);
     }
   }
 
+
+
+
+
+
+
+
   /// Calls AuthController.register, shows toast & manages loading state
   Future<void> _handleRegister() async {
-    final name            = _registerNameController.text.trim();
+    final firstName            = _registerFirstNameController.text.trim();
+    final lastName            = _registerLastNameController.text.trim();
     final email           = _registerEmailController.text.trim();
     final password        = _registerPasswordController.text;
     final confirmPassword = _registerConfirmPasswordController.text;
 
-    if (name.isEmpty ||
+    if (firstName.isEmpty ||
+        lastName.isEmpty ||
         email.isEmpty ||
         password.isEmpty ||
         confirmPassword.isEmpty) {
@@ -136,7 +194,8 @@ class _AuthScreenState extends State<AuthScreen>
 
     try {
       final success = await _authController.register(
-        fullName: name,
+        firstName: firstName,
+        lastName: lastName,
         email: email,
         password: password,
       );
@@ -310,16 +369,15 @@ class _AuthScreenState extends State<AuthScreen>
                                 ),
                                 child: SingleChildScrollView(
                                   child: RegisterForm(
-                                    nameController: _registerNameController,
+                                    firstNameController: _registerFirstNameController,
+                                    lastNameController: _registerLastNameController,
                                     emailController: _registerEmailController,
                                     passwordController: _registerPasswordController,
-                                    confirmPasswordController:
-                                    _registerConfirmPasswordController,
+                                    confirmPasswordController: _registerConfirmPasswordController,
                                     showPassword: _showRegisterPassword,
                                     toggleShowPassword: () {
                                       setState(() {
-                                        _showRegisterPassword =
-                                        !_showRegisterPassword;
+                                        _showRegisterPassword = !_showRegisterPassword;
                                       });
                                     },
                                     isLoading: _registerLoading,
