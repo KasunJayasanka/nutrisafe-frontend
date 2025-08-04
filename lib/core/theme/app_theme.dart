@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'app_colors.dart';
+
 
 final ThemeData appTheme = ThemeData(
   brightness: Brightness.dark,
-  scaffoldBackgroundColor: Colors.black,
+  scaffoldBackgroundColor: Colors.white,
   primaryColor: Colors.black,
-  textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme),
+  textTheme: GoogleFonts.poppinsTextTheme().copyWith(
+  bodyLarge: const TextStyle(color: AppColors.textPrimary),
+  bodyMedium: const TextStyle(color: AppColors.textSecondary),
+ ),
   appBarTheme: const AppBarTheme(
     color: Colors.black,
     elevation: 0,
   ),
   colorScheme: ColorScheme.dark(
-    primary: Colors.black,
-    secondary: Colors.white, // replaces accentColor
+    primary: Colors.white,
+    secondary: Colors.black, // replaces accentColor
   ),
 );
