@@ -77,7 +77,24 @@ class _EditMealScreenState extends ConsumerState<EditMealScreen> {
     // loading?
     if (prov.editingLoading || !_inited) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Edit Meal')),
+        appBar: AppBar(
+          backgroundColor: AppColors.uploadButtonBackground,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.emerald700),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: const Text(
+            'Edit Meal',
+            style: TextStyle(
+              color: AppColors.emerald700,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          centerTitle: false,
+        ),
+
         body: const Center(child: CircularProgressIndicator()),
       );
     }
@@ -91,7 +108,23 @@ class _EditMealScreenState extends ConsumerState<EditMealScreen> {
     final totalSu = _existing.fold<double>(0, (s, it) => s + it.sugar);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Meal')),
+      appBar: AppBar(
+        backgroundColor: AppColors.uploadButtonBackground,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.emerald700),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          'Edit Meal',
+          style: TextStyle(
+            color: AppColors.emerald700,
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: false,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 16),
