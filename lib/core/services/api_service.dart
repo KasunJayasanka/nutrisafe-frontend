@@ -1,4 +1,4 @@
-// File: lib/core/providers/api_provider.dart
+// File: lib/core/providers/api_service.dart
 
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

@@ -5,7 +5,10 @@ import 'package:frontend_v2/features/auth/screens/auth_screen.dart';
 import 'package:frontend_v2/features/home/screens/dashboard_screen.dart';
 import 'package:frontend_v2/features/home/screens/welcome_screen.dart';
 import 'package:frontend_v2/features/profile/screens/profile_screen.dart';
-import 'package:frontend_v2/features/meal_logging//screens/food_logger_screen.dart';
+import 'package:frontend_v2/features/meal_logging/screens/food_logger_screen.dart';
+import 'features/goals/screens/goals_screen.dart';
+import 'features/goals/screens/goals_history_screen.dart';
+
 
 import 'core/theme/app_theme.dart';
 
@@ -38,7 +41,10 @@ class MyApp extends StatelessWidget {
         /// "/profile" → the ProfileScreen
         '/profile' : (ctx) => const ProfileScreen(),
 
-        '/food' : (ctx) => const FoodLoggerScreen()
+        '/food' : (ctx) => const FoodLoggerScreen(),
+
+        '/goals': (ctx) => const GoalsScreen(),
+        '/goals/history': (ctx) => const GoalsHistoryScreen(),
       },
     );
   }

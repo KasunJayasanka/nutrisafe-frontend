@@ -270,11 +270,36 @@ class _ProfileContentState extends ConsumerState<ProfileContent> {
           ],
         ),
       ),
+      // ... inside ProfileScreen's build(...)
       bottomNavigationBar: BottomNavBar(
-        currentIndex: 4,
+        currentIndex: 4, // Profile tab
         onTap: (idx) {
-          if (idx == 0) {
-            Navigator.pushReplacementNamed(context, '/dashboard');
+          final current = ModalRoute.of(context)?.settings.name;
+
+          switch (idx) {
+            case 0: // Dashboard
+              if (current != '/dashboard') {
+                Navigator.pushReplacementNamed(context, '/dashboard');
+              }
+              break;
+            case 1: // Food
+              if (current != '/food') {
+                Navigator.pushReplacementNamed(context, '/food');
+              }
+              break;
+            case 2: // Goals
+              if (current != '/goals') {
+                Navigator.pushReplacementNamed(context, '/goals');
+              }
+              break;
+            case 3: // Analytics
+              if (current != '/analytics') {
+                Navigator.pushReplacementNamed(context, '/analytics');
+              }
+              break;
+            case 4: // Profile
+            // already here; do nothing
+              break;
           }
         },
       ),
