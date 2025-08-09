@@ -144,6 +144,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             case 1:
               Navigator.pushReplacementNamed(context, '/food');
               break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/goals');
+              break;
             case 4:
             // If user taps “Profile” (index 4), navigate there
               if (ModalRoute.of(context)?.settings.name != '/profile') {
