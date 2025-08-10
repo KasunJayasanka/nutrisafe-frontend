@@ -5,15 +5,15 @@ import 'package:frontend_v2/features/home/widgets/quick_stat_card.dart';
 class QuickStatsGrid extends StatelessWidget {
   final int caloriesConsumed;
   final int caloriesTarget;
-  final int proteinConsumed;
-  final int proteinTarget;
+  final int hydrationConsumed;
+  final int hydrationTarget;
 
   const QuickStatsGrid({
     Key? key,
     required this.caloriesConsumed,
     required this.caloriesTarget,
-    required this.proteinConsumed,
-    required this.proteinTarget,
+    required this.hydrationConsumed,
+    required this.hydrationTarget,
   }) : super(key: key);
 
   @override
@@ -22,6 +22,7 @@ class QuickStatsGrid extends StatelessWidget {
 
     return Row(
       children: [
+        // ─── Calories ─────────────────────────────
         Expanded(
           child: QuickStatCard(
             icon: Icons.local_fire_department,
@@ -38,14 +39,16 @@ class QuickStatsGrid extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
+
+        // ─── Hydration ─────────────────────────────
         Expanded(
           child: QuickStatCard(
-            icon: Icons.bolt,
+            icon: Icons.water_drop,
             iconBackground: AppColors.sky500,
-            title: 'Protein',
-            value: '$proteinConsumed',
-            unitLabel: 'g',
-            target: proteinTarget,
+            title: 'Hydration',
+            value: '$hydrationConsumed',
+            unitLabel: 'glasses', // or 'cups' if you prefer
+            target: hydrationTarget,
             extraLine: null,
             colors: const [
               AppColors.sky50,

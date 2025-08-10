@@ -1,6 +1,7 @@
 // File: lib/main.dart
 
 import 'package:flutter/material.dart';
+import 'package:frontend_v2/features/splash/screens/splash_screen.dart';
 import 'package:frontend_v2/features/auth/screens/auth_screen.dart';
 import 'package:frontend_v2/features/home/screens/dashboard_screen.dart';
 import 'package:frontend_v2/features/home/screens/welcome_screen.dart';

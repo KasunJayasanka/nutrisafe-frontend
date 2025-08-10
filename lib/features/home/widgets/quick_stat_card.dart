@@ -25,83 +25,88 @@ class QuickStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: colors.last),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: colors,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+    return SizedBox(
+      height: 110, // set a fixed height for all cards
+      child: Card(
+        color: Colors.white,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: colors.last),
         ),
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: iconBackground,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Icon(icon, size: 20, color: Colors.white),
-              ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: colors,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: colors.last.darken(), // see color_extension.dart
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '$value$unitLabel',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: colors.last.darken(by: 0.9),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'of $target$unitLabel',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: colors.last.darken(),
-                    ),
-                  ),
-                  if (extraLine != null) ...[
-                    const SizedBox(height: 4),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: iconBackground,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Icon(icon, size: 20, color: Colors.white),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // center vertically
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      extraLine!,
+                      title,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: colors.last.darken(),
                       ),
                     ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '$value$unitLabel',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: colors.last.darken(by: 0.9),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'of $target$unitLabel',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: colors.last.darken(),
+                      ),
+                    ),
+                    if (extraLine != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        extraLine!,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: colors.last.darken(),
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+
   }
 }
