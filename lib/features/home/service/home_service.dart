@@ -43,4 +43,29 @@ class HomeService {
         queryParameters: {'limit': limit},
         options: await _auth());
   }
+
+  Future<Response> getMealWarningsByDay(DateTime day) async {
+    // Local start/end of day (device timezone)
+    final startLocal = DateTime(day.year, day.month, day.day);
+    final endLocal   = startLocal.add(const Duration(days: 1));
+
+    // Convert those instants to UTC, but send as RFC3339 with 'Z'
+    String toRfc3339Utc(DateTime dtLocal) =>
+        dtLocal.toUtc().toIso8601String().split('.').first + 'Z';
+
+    return _api.get(
+      '/user/meals/warnings',
+      queryParameters: {
+        'from': toRfc3339Utc(startLocal),
+        'to':   toRfc3339Utc(endLocal),
+      },
+      options: await _auth(),
+    );
+  }
+
+// Optional: single meal
+  Future<Response> getMealWarningsById(int mealId) async {
+    return _api.get('/user/meals/$mealId/warnings',
+        options: await _auth());
+  }
 }

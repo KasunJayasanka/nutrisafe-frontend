@@ -151,9 +151,76 @@ class DashboardData {
   final GoalsByDateResponse goals;
   final NutrientBreakdownResponse breakdown;
   final List<RecentMealItem> recentItems;
+  final List<Map<String, String>> alerts;
+
   DashboardData({
     required this.goals,
     required this.breakdown,
     required this.recentItems,
+    this.alerts = const <Map<String, String>>[],
   });
+
+  DashboardData copyWith({
+    GoalsByDateResponse? goals,
+    NutrientBreakdownResponse? breakdown,
+    List<RecentMealItem>? recentItems,
+    List<Map<String, String>>? alerts,
+  }) {
+    return DashboardData(
+      goals: goals ?? this.goals,
+      breakdown: breakdown ?? this.breakdown,
+      recentItems: recentItems ?? this.recentItems,
+      alerts: alerts ?? this.alerts,
+    );
+  }
+}
+
+class ItemWarningDto {
+  final int mealItemId;
+  final String foodLabel;
+  final bool safe;
+  final String warnings;
+  final double calories;
+
+  ItemWarningDto({
+    required this.mealItemId,
+    required this.foodLabel,
+    required this.safe,
+    required this.warnings,
+    required this.calories,
+  });
+
+  factory ItemWarningDto.fromJson(Map<String, dynamic> j) => ItemWarningDto(
+    mealItemId: j['meal_item_id'] as int,
+    foodLabel:  j['food_label'] as String,
+    safe:       j['safe'] as bool,
+    warnings:   j['warnings'] as String,
+    calories:   (j['calories'] as num).toDouble(),
+  );
+}
+
+class MealWarningsDto {
+  final int mealId;
+  final String type;
+  final DateTime ateAt;
+  final bool mealSafe;
+  final List<ItemWarningDto> warningsByItem;
+
+  MealWarningsDto({
+    required this.mealId,
+    required this.type,
+    required this.ateAt,
+    required this.mealSafe,
+    required this.warningsByItem,
+  });
+
+  factory MealWarningsDto.fromJson(Map<String, dynamic> j) => MealWarningsDto(
+    mealId: j['meal_id'] as int,
+    type:   j['type'] as String,
+    ateAt:  DateTime.parse(j['ate_at'] as String),
+    mealSafe: j['meal_safe'] as bool,
+    warningsByItem: (j['warnings_by_item'] as List?)
+        ?.map((e) => ItemWarningDto.fromJson(e))
+        .toList() ?? <ItemWarningDto>[],
+  );
 }

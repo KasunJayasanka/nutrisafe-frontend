@@ -108,8 +108,10 @@ class DashboardScreen extends HookConsumerWidget {
 
                     const SizedBox(height: 20),
 
-                    // Alerts — you can replace this later with a real endpoint
-                    const AlertsSection(alerts: []),
+                    AlertsSection(
+                      alerts: data.alerts,
+                    ),
+
 
                     const SizedBox(height: 20),
 
@@ -152,4 +154,13 @@ class DashboardScreen extends HookConsumerWidget {
     if (diff.inHours   < 24) return '${diff.inHours} hours ago';
     return DateFormat('MMM d, h:mm a').format(t);
   }
+}
+
+String _prettyTime(String iso) {
+  final t = DateTime.tryParse(iso);
+  if (t == null) return iso;
+  final diff = DateTime.now().difference(t);
+  if (diff.inMinutes < 60) return '${diff.inMinutes} min ago';
+  if (diff.inHours < 24) return '${diff.inHours} hours ago';
+  return DateFormat('MMM d, h:mm a').format(t);
 }
