@@ -38,34 +38,53 @@ class CameraCard extends ConsumerWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.camera_alt),
-            label: const Text('Capture Food'),
-            style: ElevatedButton.styleFrom(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+
+          Container(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Colors.indigo, Colors.indigoAccent],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(24),
             ),
-            onPressed: () async {
-              final picker = ImagePicker();
-              final img = await picker.pickImage(
-                  source: ImageSource.camera, maxWidth: 800);
-              if (img == null) return;
-              final bytes = await img.readAsBytes();
-              final b64 = base64Encode(bytes);
-              await ref
-                  .read(mealProvider)
-                  .recognizeFoods('data:image/jpeg;base64,$b64');
-              // show results in a bottom sheet
-              showModalBottomSheet(
-                context: c,
-                builder: (_) => const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: ManualSearchCard(),
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.camera_alt, color: Colors.white),
+              label: const Text(
+                'Capture Food',
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent, // make button bg transparent
+                shadowColor: Colors.transparent,     // remove shadow so gradient shows
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                isScrollControlled: true,
-              );
-            },
+              ),
+              onPressed: () async {
+                final picker = ImagePicker();
+                final img = await picker.pickImage(
+                    source: ImageSource.camera, maxWidth: 800);
+                if (img == null) return;
+                final bytes = await img.readAsBytes();
+                final b64 = base64Encode(bytes);
+                await ref
+                    .read(mealProvider)
+                    .recognizeFoods('data:image/jpeg;base64,$b64');
+                // show results in a bottom sheet
+                showModalBottomSheet(
+                  context: c,
+                  builder: (_) => const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: ManualSearchCard(),
+                  ),
+                  isScrollControlled: true,
+                );
+              },
+            ),
           )
+
         ]),
       ),
     );
