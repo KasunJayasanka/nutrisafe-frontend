@@ -137,6 +137,7 @@ class DashboardScreen extends HookConsumerWidget {
           switch (idx) {
             case 1: Navigator.pushReplacementNamed(context, '/food'); break;
             case 2: Navigator.pushReplacementNamed(context, '/goals'); break;
+            case 3: Navigator.pushReplacementNamed(context, '/analytics'); break;
             case 4:
               if (ModalRoute.of(context)?.settings.name != '/profile') {
                 Navigator.pushReplacementNamed(context, '/profile');

@@ -32,21 +32,7 @@ class GoalsHeader extends HookConsumerWidget {
               Text('Track your daily targets', style: Theme.of(context).textTheme.bodySmall),
             ]),
           ]),
-          OutlinedButton.icon(
-            icon: Icon(s.isEditing ? Icons.save : Icons.edit),
-            label: Text(s.isEditing ? 'Save' : 'Edit'),
-            onPressed: () async {
-              if (s.isEditing) {
-                await notifier.save();
-                // optional: show a small SnackBar
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Goals updated successfully')));
-                }
-              } else {
-                notifier.toggleEdit(true);
-              }
-            },
-          ),
+
         ],
       ),
     );

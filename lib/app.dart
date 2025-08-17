@@ -9,6 +9,8 @@ import 'package:frontend_v2/features/profile/screens/profile_screen.dart';
 import 'package:frontend_v2/features/meal_logging/screens/food_logger_screen.dart';
 import 'features/goals/screens/goals_screen.dart';
 import 'features/goals/screens/goals_history_screen.dart';
+import 'features/analytics/screens/analytics_screen.dart';
+
 
 
 import 'core/theme/app_theme.dart';
@@ -46,6 +48,8 @@ class MyApp extends StatelessWidget {
 
         '/goals': (ctx) => const GoalsScreen(),
         '/goals/history': (ctx) => const GoalsHistoryScreen(),
+
+        '/analytics': (ctx) => const AnalyticsScreen(),
       },
     );
   }
