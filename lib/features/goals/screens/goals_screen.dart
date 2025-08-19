@@ -7,6 +7,7 @@ import 'package:frontend_v2/core/widgets/bottom_nav_bar.dart'; // ⬅️ add thi
 import 'package:frontend_v2/core/widgets/gradient_app_bar.dart';
 
 import '../provider/goals_provider.dart';
+import '../widgets/activity_input_field.dart';
 import '../widgets/goals_header.dart';
 import '../widgets/goals_section_card.dart';
 import '../widgets/goal_templates.dart';
@@ -15,6 +16,8 @@ import '../widgets/gradient_border_section.dart';
 import 'daily_nutrition_screen.dart';
 import 'goals_history_screen.dart';
 import 'package:frontend_v2/features/auth/widgets/gradient_button.dart';
+import 'package:frontend_v2/features/goals/widgets/exercise_timer_dialog.dart';
+
 
 class GoalsScreen extends HookConsumerWidget {
   const GoalsScreen({super.key});
@@ -43,6 +46,8 @@ class GoalsScreen extends HookConsumerWidget {
 
     final hydrationCtl = useTextEditingController();
     final exerciseCtl = useTextEditingController();
+
+
 
     return Scaffold(
       appBar: GradientAppBar(
@@ -96,10 +101,13 @@ class GoalsScreen extends HookConsumerWidget {
             error: (e, _) => Center(child: Text('Error: $e')),
             data: (s) {
               useEffect(() {
-                hydrationCtl.text = s.current.hydration.toString();
-                exerciseCtl.text = s.current.exercise.toString();
+                hydrationCtl.text = s.progress.hydration.consumed.round().toString();
+                exerciseCtl.text  = s.progress.exercise.consumed.round().toString();
                 return null;
-              }, [s.current.hydration, s.current.exercise]);
+              }, [
+                s.progress.hydration.consumed,
+                s.progress.exercise.consumed,
+              ]);
 
               return SingleChildScrollView(
                 child: Column(
@@ -285,23 +293,37 @@ class GoalsScreen extends HookConsumerWidget {
                           Text("Update Today's Activity",
                               style: Theme.of(context).textTheme.titleMedium),
                           const SizedBox(height: 12),
-                          Row(children: [
-                            Expanded(
-                              child: TextFormField(
-                                controller: hydrationCtl,
-                                keyboardType: TextInputType.number,
-                                decoration: _activityInputDecoration('Hydration (glasses)'),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ActivityInputField(
+                                  controller: hydrationCtl,
+                                  label: 'Hydration (glasses)',
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextFormField(
-                                controller: exerciseCtl,
-                                keyboardType: TextInputType.number,
-                                decoration: _activityInputDecoration('Exercise (min)'),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: ActivityInputField(
+                                  controller: exerciseCtl,
+                                  label: 'Exercise (min)',
+                                ),
                               ),
-                            ),
-                          ]),
+                            const SizedBox(width: 10),
+                              SizedBox(
+                                height: 46,
+                                width: 100,
+                                child: GradientButton(
+                                  text: 'Timer',
+                                  icon: Icons.timer_outlined,
+                                  onPressed: () async {
+                                    final mins = await ExerciseTimerDialog.show(context);
+                                    if (mins != null) exerciseCtl.text = mins.toString();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+
                           const SizedBox(height: 12),
 
                           Container(
