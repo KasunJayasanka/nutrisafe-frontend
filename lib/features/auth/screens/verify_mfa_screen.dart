@@ -12,6 +12,7 @@ import '../providers/auth_provider.dart';
 import '../widgets/custom_back_button.dart';
 import 'package:frontend_v2/features/home/screens/dashboard_screen.dart';
 import 'package:frontend_v2/features/onboarding/screens/onboarding_screen.dart';
+import 'package:frontend_v2/features/notifications/provider/notifications_provider.dart';
 
 
 class VerifyMFAScreen extends HookConsumerWidget {
@@ -66,6 +67,9 @@ class VerifyMFAScreen extends HookConsumerWidget {
                   : OnboardingScreen(
                 onComplete: () async {
                   await storage.write(key: 'onboarded', value: 'true');
+
+                  ref.invalidate(notificationSetupProvider);
+
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute<void>(
                       builder: (_) => const DashboardScreen(),

@@ -14,6 +14,11 @@ import 'package:frontend_v2/features/home/widgets/recent_meals_section.dart';
 
 import 'package:frontend_v2/features/home/provider/home_provider.dart';
 
+import 'package:frontend_v2/features/notifications/provider/alerts_merge_provider.dart';
+import 'package:frontend_v2/features/notifications/provider/notifications_provider.dart';
+
+
+
 class DashboardScreen extends HookConsumerWidget {
   const DashboardScreen({super.key});
 
@@ -23,10 +28,13 @@ class DashboardScreen extends HookConsumerWidget {
     useEffect(() {
       // Delay to let build finish
       Future.microtask(() => ref.invalidate(dashboardProvider));
+
+      ref.read(notificationSetupProvider);
       return null;
     }, const []);
 
     final state = ref.watch(dashboardProvider);
+    final mergedAlerts = ref.watch(mergedAlertsProvider);
 
     return Scaffold(
       appBar: TopBar(onBellTap: () {}),
@@ -48,13 +56,7 @@ class DashboardScreen extends HookConsumerWidget {
               final macros = data.breakdown.macros;
               final micros = data.breakdown.micros;
 
-              final caloriesConsumed = p.calories.consumed.round();
-              final caloriesTarget   = g.goals.calories.round(); // not used here; see below
-              final hydrationConsumed = p.hydration.consumed.round();
-              final hydrationTarget   = g.goals.hydration.round();
 
-              final proteinConsumed = p.protein.consumed.round();
-              final proteinTarget   = g.goals.protein.round();
 
               // QuickStats at the top → Calories + Hydration (requested change)
               return SingleChildScrollView(
@@ -62,22 +64,14 @@ class DashboardScreen extends HookConsumerWidget {
                 child: Column(
                   children: [
                     QuickStatsGrid(
-                      caloriesConsumed: caloriesConsumed,
-                      caloriesTarget: g.goals.calories.toInt(),
-                      // swap protein with hydration at the top:
-                      hydrationConsumed: hydrationConsumed,  // <- hydration
-                      hydrationTarget: hydrationTarget,       // <- hydration target
+                      progress: p,        // p = data.goals.progress
+                      goals: g.goals,     // (not used directly but left for future use)
                     ),
                     const SizedBox(height: 20),
 
                     // Today’s progress (keep calories + protein + hydration bars)
                     TodayProgressSection(
-                      caloriesConsumed: caloriesConsumed,
-                      caloriesTarget: g.goals.calories.toInt(),
-                      proteinConsumed: proteinConsumed,
-                      proteinTarget: proteinTarget,
-                      waterConsumed: hydrationConsumed,
-                      waterTarget: hydrationTarget,
+                      progress: p,
                     ),
 
                     const SizedBox(height: 20),
@@ -109,7 +103,7 @@ class DashboardScreen extends HookConsumerWidget {
                     const SizedBox(height: 20),
 
                     AlertsSection(
-                      alerts: data.alerts,
+                      alerts: mergedAlerts,
                     ),
 
 

@@ -26,7 +26,7 @@ class QuickStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 110, // set a fixed height for all cards
+      height: 136, // set a fixed height for all cards
       child: Card(
         color: Colors.white,
         margin: EdgeInsets.zero,
@@ -43,7 +43,7 @@ class QuickStatCard extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(12),
           ),
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
             children: [
               Container(
@@ -60,43 +60,37 @@ class QuickStatCard extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center, // center vertically
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: colors.last.darken(),
-                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.last.darken()),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '$value$unitLabel',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: colors.last.darken(by: 0.9),
-                      ),
+                      '$value $unitLabel', // add a space for readability
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colors.last.darken(by: 0.9)),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'of $target$unitLabel',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: colors.last.darken(),
-                      ),
+                      'of $target $unitLabel',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 12, color: colors.last.darken()),
                     ),
                     if (extraLine != null) ...[
                       const SizedBox(height: 4),
                       Text(
                         extraLine!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: colors.last.darken(),
-                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: colors.last.darken()),
                       ),
                     ],
                   ],

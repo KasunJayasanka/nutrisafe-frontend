@@ -127,4 +127,25 @@ class AppColors {
   static const Color teal600   = Color(0xFF009688);
   static const Color purple600 = Color(0xFF8E24AA);
 
+
+  static const Color rose500   = Color(0xFFF43F5E);
+  static const Color violet500 = Color(0xFF8B5CF6);
+  static const Color pink500   = Color(0xFFEC4899);
+
+  static const Color rose50    = Color(0xFFFFF1F2);
+  static const Color violet50  = Color(0xFFFAF5FF);
+  static const Color pink50    = Color(0xFFFDF2F8);
+
+  static const Color amber50  = Color(0xFFFFFBEB);
+  static const Color amber100 = Color(0xFFFEF3C7);
+
+  static const Color rose100 = Color(0xFFFFE4E6);
+  static const Color rose600 = Color(0xFFE11D48);
+
+  static const Color indigo50  = Color(0xFFEEF2FF);
+  static const Color indigo100 = Color(0xFFE0E7FF);
+  static const Color indigo600 = Color(0xFF4F46E5);
+
+  static const Color purple50  = Color(0xFFFAF5FF);
+  static const Color purple100 = Color(0xFFF3E8FF);
 }
