@@ -14,6 +14,8 @@ import 'package:frontend_v2/features/auth/widgets/login_form.dart';
 import 'package:frontend_v2/features/auth/widgets/register_form.dart';
 import 'package:frontend_v2/features/home/screens/dashboard_screen.dart';
 import 'package:frontend_v2/features/onboarding/screens/onboarding_screen.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:frontend_v2/features/notifications/provider/notifications_provider.dart';
 
 
 class AuthScreen extends StatefulWidget {
@@ -43,6 +45,12 @@ class _AuthScreenState extends State<AuthScreen>
   bool _registerLoading = false;
   bool _showLoginPassword    = false;
   bool _showRegisterPassword = false;
+
+  void _kickOffPush() {
+    final container = ProviderScope.containerOf(context, listen: false);
+    container.invalidate(notificationSetupProvider);
+  }
+
 
   @override
   void initState() {
@@ -125,8 +133,10 @@ class _AuthScreenState extends State<AuthScreen>
       final onboarded = response['onboarded'] ?? false;
 
       if (token != null) {
-        await secureStorage.write(key: 'auth_token', value: token);
+        await secureStorage.write(key: 'token', value: token);
         await secureStorage.write(key: 'onboarded', value: onboarded.toString());
+
+        _kickOffPush();
 
         if (onboarded == true) {
           Navigator.of(context).pushReplacement(
@@ -138,6 +148,9 @@ class _AuthScreenState extends State<AuthScreen>
               builder: (_) => OnboardingScreen(
                 onComplete: () async {
                   await secureStorage.write(key: 'onboarded', value: 'true');
+
+                  _kickOffPush();
+
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (_) => const DashboardScreen()),
                   );
