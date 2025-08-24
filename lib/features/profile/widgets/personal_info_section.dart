@@ -54,19 +54,38 @@ class PersonalInfoSection extends StatelessWidget {
     required TextInputType keyboardType,
     required String hintText,
   }) {
+    final radius = BorderRadius.circular(8);
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
+      style: const TextStyle(color: Colors.black, fontSize: 14),
       decoration: InputDecoration(
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        filled: true,
+        fillColor: Colors.white, // sits on the gray card nicely
         hintText: hintText,
+        hintStyle: const TextStyle(color: AppColors.textSecondary),
+
+        // visible border when not focused
+        enabledBorder: OutlineInputBorder(
+          borderRadius: radius,
+          borderSide: const BorderSide(color: AppColors.emerald200, width: 1.2),
+        ),
+        // stronger border when focused
+        focusedBorder: OutlineInputBorder(
+          borderRadius: radius,
+          borderSide: const BorderSide(color: AppColors.emerald600, width: 1.6),
+        ),
+        // fallback for error/disabled (optional)
+        border: OutlineInputBorder(
+          borderRadius: radius,
+          borderSide: const BorderSide(color: AppColors.emerald200, width: 1.2),
+        ),
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

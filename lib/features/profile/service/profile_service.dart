@@ -72,4 +72,18 @@ class ProfileService {
     );
     return MfaResponse.fromJson(response.data as Map<String, dynamic>);
   }
+
+  Future<bool> toggleNotifications({
+    required String token,
+    required bool enabled,
+  }) async {
+    final res = await dio.post(
+      '/user/notifications/toggle',
+      data: {'enabled': enabled},
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+    // backend returns: { "enabled": true, "message": "notifications updated" }
+    return (res.data is Map && res.data['enabled'] == true);
+  }
+
 }
