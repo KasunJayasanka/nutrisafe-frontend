@@ -18,6 +18,9 @@ import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'package:frontend_v2/features/profile/screens/privacy_security_screen.dart';
 import 'package:frontend_v2/features/profile/provider/notifications_toggle_provider.dart';
+import 'package:frontend_v2/features/profile/provider/profile_provider.dart' show bmiFutureProvider, BmiArgs;
+import 'package:frontend_v2/features/profile/widgets/bmi_card.dart';
+
 
 
 import 'package:intl/intl.dart';

@@ -2,6 +2,7 @@
 
 import 'package:frontend_v2/features/profile/data/user_profile.dart';
 import 'package:frontend_v2/features/profile/service/profile_service.dart';
+import 'package:frontend_v2/features/profile/data/bmi_result.dart';
 
 class ProfileRepository {
   final ProfileService service;
@@ -40,6 +41,14 @@ class ProfileRepository {
       fitnessGoals:         fitnessGoals,
       mfaEnabled:           mfaEnabled,
       profilePictureBase64: profilePictureBase64,
+    );
+  }
+
+  Future<BmiResult> getBmi({double? heightCm, double? weightKg}) {
+    return service.fetchBmi(
+      token: bearerToken,
+      heightCm: heightCm,
+      weightKg: weightKg,
     );
   }
 

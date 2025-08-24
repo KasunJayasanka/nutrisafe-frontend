@@ -3,6 +3,8 @@
 import 'package:dio/dio.dart';
 import 'package:frontend_v2/features/profile/data/user_profile.dart';
 import 'package:frontend_v2/features/profile/data/mfa_response.dart';
+import 'package:frontend_v2/features/profile/data/bmi_result.dart';
+
 
 class ProfileService {
   final Dio dio;
@@ -84,6 +86,23 @@ class ProfileService {
     );
     // backend returns: { "enabled": true, "message": "notifications updated" }
     return (res.data is Map && res.data['enabled'] == true);
+  }
+
+  Future<BmiResult> fetchBmi({
+    required String token,
+    double? heightCm, // optional override
+    double? weightKg, // optional override
+  }) async {
+    final params = <String, dynamic>{};
+    if (heightCm != null) params['height_cm'] = heightCm;
+    if (weightKg != null) params['weight_kg'] = weightKg;
+
+    final res = await dio.get(
+      '/user/profile/bmi', // matches your backend route group
+      queryParameters: params.isEmpty ? null : params,
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+    return BmiResult.fromJson(res.data as Map<String, dynamic>);
   }
 
 }

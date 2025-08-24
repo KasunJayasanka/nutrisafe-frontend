@@ -5,6 +5,9 @@ import 'package:frontend_v2/core/providers/secure_storage_provider.dart';
 import 'package:frontend_v2/features/profile/service/profile_service.dart';
 import 'package:frontend_v2/features/profile/data/profile_repository.dart';
 import 'package:frontend_v2/features/profile/data/user_profile.dart';
+import 'package:frontend_v2/features/profile/data/bmi_result.dart';
+
+
 
 /// 1) Low-level service. Keep as Provider; it doesn't own auth state.
 final profileServiceProvider = Provider.autoDispose<ProfileService>((ref) {
@@ -83,5 +86,21 @@ FutureProvider.autoDispose.family<UserProfile, UpdatePayload>((ref, payload) asy
     fitnessGoals:         payload.fitnessGoals,
     mfaEnabled:           payload.mfaEnabled,
     profilePictureBase64: payload.profilePictureBase64,
+  );
+});
+
+class BmiArgs {
+  final double? heightCm;
+  final double? weightKg;
+  const BmiArgs({this.heightCm, this.weightKg});
+}
+
+final bmiFutureProvider =
+FutureProvider.autoDispose.family<BmiResult, BmiArgs>((ref, args) async {
+  final repo = ref.watch(profileRepositoryProvider);
+  if (repo == null) throw Exception('Not authenticated.');
+  return repo.getBmi(
+    heightCm: args.heightCm,
+    weightKg: args.weightKg,
   );
 });
