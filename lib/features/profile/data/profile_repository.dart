@@ -52,4 +52,15 @@ class ProfileRepository {
     );
   }
 
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) {
+    return service.changePassword(
+      token: bearerToken,
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    );
+  }
+
 }

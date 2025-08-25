@@ -105,4 +105,18 @@ class ProfileService {
     return BmiResult.fromJson(res.data as Map<String, dynamic>);
   }
 
+  Future<void> changePassword({
+    required String token,
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    await dio.patch(
+      '/user/profile/password',
+      data: {
+        'current_password': currentPassword,
+        'new_password': newPassword,
+      },
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+  }
 }

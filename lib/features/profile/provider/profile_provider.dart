@@ -104,3 +104,22 @@ FutureProvider.autoDispose.family<BmiResult, BmiArgs>((ref, args) async {
     weightKg: args.weightKg,
   );
 });
+
+class ChangePasswordPayload {
+  final String currentPassword;
+  final String newPassword;
+  const ChangePasswordPayload({
+    required this.currentPassword,
+    required this.newPassword,
+  });
+}
+
+final changePasswordProvider =
+FutureProvider.autoDispose.family<void, ChangePasswordPayload>((ref, payload) async {
+  final repo = ref.watch(profileRepositoryProvider);
+  if (repo == null) throw Exception('Not authenticated.');
+  await repo.changePassword(
+    currentPassword: payload.currentPassword,
+    newPassword: payload.newPassword,
+  );
+});
