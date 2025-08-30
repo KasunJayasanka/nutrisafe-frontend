@@ -182,39 +182,6 @@ class OnboardingScreen extends HookConsumerWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 16),
-                          // Health
-                          MultiSelectField<String>(
-                            label: 'Health Conditions (Optional)',
-                            hintText: 'Select one or more conditions',
-                            items: healthOptions
-                                .map((v) => DropdownMenuItem(value: v, child: Text(v)))
-                                .toList(),
-                            selectedValues: health.value,
-                            onChanged: (list) => health.value = list,
-                            prefixIcon: Icons.health_and_safety,
-                          ),
-                          if (health.value.contains('other')) ...[
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: otherHealthCtrl,
-                              decoration: const InputDecoration(
-                                labelText: 'Please specify',
-                              ),
-                            ),
-                          ],
-                          const SizedBox(height: 16),
-                          // Fitness
-                          MultiSelectField<String>(
-                            label: 'Fitness Goals (Optional)',
-                            hintText: 'Select one or more goals',
-                            items: goalOptions
-                                .map((v) => DropdownMenuItem(value: v, child: Text(v)))
-                                .toList(),
-                            selectedValues: fitness.value,
-                            onChanged: (list) => fitness.value = list,
-                            prefixIcon: Icons.flag,
-                          ),
                           const SizedBox(height: 24),
                           // MFA
                           MfaToggle(

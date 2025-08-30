@@ -311,7 +311,7 @@ class _AuthScreenState extends State<AuthScreen>
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              'HealthTrack',
+                              'Nutrivue',
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
@@ -323,7 +323,7 @@ class _AuthScreenState extends State<AuthScreen>
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Smart nutrition for athletes',
+                              'Manage your nutrition profile',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: AppColors.textSecondary,
