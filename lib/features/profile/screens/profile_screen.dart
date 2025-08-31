@@ -5,8 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:frontend_v2/core/theme/app_colors.dart';
 import 'package:frontend_v2/core/widgets/top_bar.dart';
 import 'package:frontend_v2/core/widgets/bottom_nav_bar.dart';
-import 'package:frontend_v2/features/profile/provider/profile_provider.dart'
-    show profileFutureProvider, profileServiceProvider, authTokenProvider;
+import 'package:frontend_v2/features/profile/provider/profile_provider.dart';
 import 'package:frontend_v2/features/profile/data/user_profile.dart';
 import 'package:frontend_v2/features/profile/widgets/profile_header.dart';
 import 'package:frontend_v2/features/profile/widgets/personal_info_section.dart';
@@ -14,11 +13,13 @@ import 'package:frontend_v2/features/profile/widgets/notification_settings_secti
 import 'package:frontend_v2/features/profile/widgets/app_settings_section.dart';
 import 'package:frontend_v2/features/profile/widgets/app_info_section.dart';
 import 'package:frontend_v2/features/auth/providers/auth_provider.dart';
-import 'package:frontend_v2/features/profile/provider/profile_provider.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'package:frontend_v2/features/profile/screens/privacy_security_screen.dart';
+import 'package:frontend_v2/features/profile/provider/notifications_toggle_provider.dart';
+import 'package:frontend_v2/core/enums/sex_option.dart';
+
 
 
 import 'package:intl/intl.dart';
@@ -64,19 +65,10 @@ class _ProfileContentState extends ConsumerState<ProfileContent> {
   late final TextEditingController _weightController;
   late final TextEditingController _heightController;
   late final TextEditingController _birthdayController;
-  late final String _userId = widget.profile.userId ?? '';
-  late final String _profilePicture = widget.profile.profilePicture ?? '';
+  SexOption? _sex;
+
   File? _pickedImage;
   String? _profilePicBase64;
-
-
-
-
-
-  bool _meals  = false;
-  bool _goals  = false;
-  bool _safety = false;
-  bool _weekly = false;
 
   @override
   void initState() {
@@ -95,7 +87,7 @@ class _ProfileContentState extends ConsumerState<ProfileContent> {
           : '',
     );
 
-
+    _sex = SexOptionX.fromApi(widget.profile.sex);
 
 
   }
@@ -155,7 +147,8 @@ class _ProfileContentState extends ConsumerState<ProfileContent> {
       healthConditions:     /* your health-conditions controller */ '',
       fitnessGoals:         /* your fitness-goals controller     */ '',
       mfaEnabled:           /* your MFA toggle boolean          */ false,
-      profilePictureBase64: _profilePicBase64,   // ← pass your real Base64 here
+      profilePictureBase64: _profilePicBase64,
+      sex: _sex?.api,
 
     );
 
@@ -188,8 +181,48 @@ class _ProfileContentState extends ConsumerState<ProfileContent> {
   }
 
 
+
+
   @override
   Widget build(BuildContext context) {
+
+    final notifState = ref.watch(notificationsEnabledProvider);
+    final notifCtrl  = ref.read(notificationsEnabledProvider.notifier);
+
+    Widget notifTile = notifState.when(
+      data: (enabled) => NotificationSettingsSection(
+        enabled: enabled,
+        onChanged: (v) async {
+          await notifCtrl.setEnabled(v);
+          final s = ref.read(notificationsEnabledProvider);
+          if (s is AsyncData<bool>) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(v ? 'Notifications enabled' : 'Notifications disabled')),
+            );
+          } else if (s is AsyncError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to update notifications')),
+            );
+          }
+        },
+      ),
+      loading: () => const Card(
+        margin: EdgeInsets.zero,
+        child: ListTile(
+          leading: Icon(Icons.notifications_none),
+          title: Text('Notifications'),
+          trailing: SizedBox(
+            width: 20, height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      ),
+      error: (e, _) => NotificationSettingsSection(
+        enabled: false,
+        onChanged: (_) {}, // keep UI stable if we failed to load state
+      ),
+    );
+
     return Scaffold(
       backgroundColor: AppColors.sky50,
       appBar: TopBar(onBellTap: () {}),
@@ -241,18 +274,12 @@ class _ProfileContentState extends ConsumerState<ProfileContent> {
               birthdayController: _birthdayController,
               heightController: _heightController,
               onBirthdayTap: _selectBirthday,
+              sex: _sex,
+              onSexChanged: (v) => setState(() => _sex = v),
             ),
             const SizedBox(height: 16),
-            NotificationSettingsSection(
-              meals:   _meals,
-              goals:   _goals,
-              safety:  _safety,
-              weekly:  _weekly,
-              onMealsChanged:  (v) => setState(() => _meals = v),
-              onGoalsChanged:  (v) => setState(() => _goals = v),
-              onSafetyChanged: (v) => setState(() => _safety = v),
-              onWeeklyChanged: (v) => setState(() => _weekly = v),
-            ),
+
+            notifTile,
             const SizedBox(height: 16),
             AppSettingsSection(
               onPrivacyPressed: () {

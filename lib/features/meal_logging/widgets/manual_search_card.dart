@@ -6,6 +6,7 @@ import 'package:frontend_v2/core/theme/app_colors.dart';
 import '../provider/meal_provider.dart';
 import '../data/food_model.dart';
 import '../data/meal_request.dart';
+import 'nutrition_preview_sheet.dart';
 
 /// A small helper to keep track of what the user has chosen to add.
 class SelectedItem {
@@ -35,11 +36,25 @@ class _ManualSearchCardState extends ConsumerState<ManualSearchCard> {
 
   // Friendly name → Edamam measure URI
   static const Map<String, String> _measures = {
-    'Gram': 'http://www.edamam.com/ontologies/edamam.owl#Measure_gram',
-    'Tbsp': 'http://www.edamam.com/ontologies/edamam.owl#Measure_tbsp',
-    'Tsp': 'http://www.edamam.com/ontologies/edamam.owl#Measure_tsp',
-    'Cup':  'http://www.edamam.com/ontologies/edamam.owl#Measure_cup',
+    'Gram'       : 'http://www.edamam.com/ontologies/edamam.owl#Measure_gram',
+    'mL'         : 'http://www.edamam.com/ontologies/edamam.owl#Measure_milliliter',
+    'Teaspoon'   : 'http://www.edamam.com/ontologies/edamam.owl#Measure_teaspoon',
+    'Tablespoon' : 'http://www.edamam.com/ontologies/edamam.owl#Measure_tablespoon',
+    'Cup'        : 'http://www.edamam.com/ontologies/edamam.owl#Measure_cup',
+    'Ounce'      : 'http://www.edamam.com/ontologies/edamam.owl#Measure_ounce',
+    'Pound'      : 'http://www.edamam.com/ontologies/edamam.owl#Measure_pound',
+    'Kilogram'   : 'http://www.edamam.com/ontologies/edamam.owl#Measure_kilogram',
+    'Serving'    : 'http://www.edamam.com/ontologies/edamam.owl#Measure_serving',
+    'Whole'      : 'http://www.edamam.com/ontologies/edamam.owl#Measure_unit',
+    // optional, food-specific:
+    'Slice'      : 'http://www.edamam.com/ontologies/edamam.owl#Measure_slice',
+    'Piece'      : 'http://www.edamam.com/ontologies/edamam.owl#Measure_piece',
+    'Wedge'      : 'http://www.edamam.com/ontologies/edamam.owl#Measure_wedge',
+    'Stick'      : 'http://www.edamam.com/ontologies/edamam.owl#Measure_stick',
+    'Pat'        : 'http://www.edamam.com/ontologies/edamam.owl#Measure_pat',
+    'Package'    : 'http://www.edamam.com/ontologies/edamam.owl#Measure_package',
   };
+
 
   void _search(String q) {
     ref.read(mealProvider).searchFoods(q);
@@ -88,6 +103,8 @@ class _ManualSearchCardState extends ConsumerState<ManualSearchCard> {
 
               // measure dropdown
               DropdownButtonFormField<String>(
+                dropdownColor: Colors.white,
+                style: const TextStyle(color: Colors.black87),
                 decoration: InputDecoration(
                   labelText: 'Measure',
                   labelStyle: TextStyle(color: AppColors.textSecondary),
@@ -102,13 +119,13 @@ class _ManualSearchCardState extends ConsumerState<ManualSearchCard> {
                 items: _measures.entries.map((e) {
                   return DropdownMenuItem(
                     value: e.value,
-                    child: Text(e.key,
-                        style: TextStyle(color: AppColors.textPrimary)),
+                      child: Text(e.key, style: const TextStyle(color: Colors.black87)),
                   );
                 }).toList(),
                 onChanged: (v) {
                   if (v != null) selMeasure = v;
                 },
+                iconEnabledColor: AppColors.textPrimary,
               ),
               const SizedBox(height: 12),
 
@@ -319,6 +336,22 @@ class _ManualSearchCardState extends ConsumerState<ManualSearchCard> {
                 itemBuilder: (ctx, i) {
                   final f = results[i];
                   return ListTile(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                        ),
+                        builder: (_) => NutritionPreviewSheet(
+                          food: f,
+                          // Defaults: Gram + 100. You can pass different defaults if you want:
+                          initialMeasureUri:
+                          'http://www.edamam.com/ontologies/edamam.owl#Measure_gram',
+                          initialQuantity: 100,
+                        ),
+                      );
+                    },
                     leading: Icon(Icons.restaurant,
                         color: AppColors.emerald600),
                     title: Text(f.label,

@@ -13,6 +13,9 @@ import '../widgets/date_picker_field.dart';
 import '../widgets/multi_select_field.dart';
 import '../widgets/mfa_toggle.dart';
 import '../widgets/number_input_field.dart';
+import 'package:frontend_v2/core/enums/sex_option.dart';
+import 'package:frontend_v2/core/widgets/sex_selector.dart';
+
 
 class OnboardingScreen extends HookConsumerWidget {
   /// Called when onboarding completes successfully.
@@ -46,6 +49,7 @@ class OnboardingScreen extends HookConsumerWidget {
     final otherHealthCtrl= useTextEditingController();
     final mfa            = useState<bool>(true);
     final avatar         = useState<String?>(null);
+    final sex = useState<SexOption?>(null);
 
     final state = ref.watch(onboardingNotifierProvider);
     ref.listen<AsyncValue<void>>(onboardingNotifierProvider, (_, s) {
@@ -182,39 +186,17 @@ class OnboardingScreen extends HookConsumerWidget {
                               ),
                             ],
                           ),
+                          // Sex
                           const SizedBox(height: 16),
-                          // Health
-                          MultiSelectField<String>(
-                            label: 'Health Conditions (Optional)',
-                            hintText: 'Select one or more conditions',
-                            items: healthOptions
-                                .map((v) => DropdownMenuItem(value: v, child: Text(v)))
-                                .toList(),
-                            selectedValues: health.value,
-                            onChanged: (list) => health.value = list,
-                            prefixIcon: Icons.health_and_safety,
+                          Text('Sex *',
+                            style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.black),
                           ),
-                          if (health.value.contains('other')) ...[
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: otherHealthCtrl,
-                              decoration: const InputDecoration(
-                                labelText: 'Please specify',
-                              ),
-                            ),
-                          ],
-                          const SizedBox(height: 16),
-                          // Fitness
-                          MultiSelectField<String>(
-                            label: 'Fitness Goals (Optional)',
-                            hintText: 'Select one or more goals',
-                            items: goalOptions
-                                .map((v) => DropdownMenuItem(value: v, child: Text(v)))
-                                .toList(),
-                            selectedValues: fitness.value,
-                            onChanged: (list) => fitness.value = list,
-                            prefixIcon: Icons.flag,
+                          const SizedBox(height: 8),
+                          SexDropdownField(
+                            value: sex.value,
+                            onChanged: (v) => sex.value = v,
                           ),
+
                           const SizedBox(height: 24),
                           // MFA
                           MfaToggle(
@@ -256,6 +238,7 @@ class OnboardingScreen extends HookConsumerWidget {
                                     mfaEnabled:       mfa.value,
                                     profilePicture:   avatar.value,
                                     onboarded:        true,
+                                    sex: (sex.value ?? SexOption.ratherNotSay).api,
                                   );
                                   await ref
                                       .read(onboardingNotifierProvider.notifier)

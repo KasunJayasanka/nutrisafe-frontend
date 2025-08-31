@@ -3,6 +3,8 @@
 import 'package:dio/dio.dart';
 import 'package:frontend_v2/features/profile/data/user_profile.dart';
 import 'package:frontend_v2/features/profile/data/mfa_response.dart';
+import 'package:frontend_v2/features/profile/data/bmi_result.dart';
+
 
 class ProfileService {
   final Dio dio;
@@ -31,6 +33,7 @@ class ProfileService {
     String? fitnessGoals,
     bool? mfaEnabled,
     String? profilePictureBase64,
+    String? sex,
   }) async {
     final body = <String, dynamic>{};
     if (firstName        != null) body['first_name']        = firstName;
@@ -45,6 +48,7 @@ class ProfileService {
     if (profilePictureBase64 != null) {
       body['profile_picture'] = profilePictureBase64;
     }
+    if (sex != null) body['sex'] = sex;
 
     await dio.patch(
       '/user/profile',
@@ -71,5 +75,50 @@ class ProfileService {
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
     return MfaResponse.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<bool> toggleNotifications({
+    required String token,
+    required bool enabled,
+  }) async {
+    final res = await dio.post(
+      '/user/notifications/toggle',
+      data: {'enabled': enabled},
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+    // backend returns: { "enabled": true, "message": "notifications updated" }
+    return (res.data is Map && res.data['enabled'] == true);
+  }
+
+  Future<BmiResult> fetchBmi({
+    required String token,
+    double? heightCm, // optional override
+    double? weightKg, // optional override
+  }) async {
+    final params = <String, dynamic>{};
+    if (heightCm != null) params['height_cm'] = heightCm;
+    if (weightKg != null) params['weight_kg'] = weightKg;
+
+    final res = await dio.get(
+      '/user/profile/bmi', // matches your backend route group
+      queryParameters: params.isEmpty ? null : params,
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+    return BmiResult.fromJson(res.data as Map<String, dynamic>);
+  }
+
+  Future<void> changePassword({
+    required String token,
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    await dio.patch(
+      '/user/profile/password',
+      data: {
+        'current_password': currentPassword,
+        'new_password': newPassword,
+      },
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
   }
 }
