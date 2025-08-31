@@ -28,6 +28,7 @@ class ProfileRepository {
     String? fitnessGoals,
     bool? mfaEnabled,
     String? profilePictureBase64,
+    String? sex,
   }) {
     return service.updateProfile(
       token:                bearerToken,
@@ -41,6 +42,7 @@ class ProfileRepository {
       fitnessGoals:         fitnessGoals,
       mfaEnabled:           mfaEnabled,
       profilePictureBase64: profilePictureBase64,
+      sex:                  sex,
     );
   }
 

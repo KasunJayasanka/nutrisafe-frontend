@@ -10,6 +10,8 @@ class OnboardingModel {
   final String?       profilePicture;
   final bool          onboarded;  // NEW FIELD
 
+  final String        sex;
+
   OnboardingModel({
     required this.birthday,
     required this.height,
@@ -18,7 +20,8 @@ class OnboardingModel {
     List<String>? fitnessGoals,
     this.mfaEnabled = false,
     this.profilePicture,
-    this.onboarded = true,  // default: true
+    this.onboarded = true,
+    required this.sex,
   })  : healthConditions = healthConditions ?? [],
         fitnessGoals     = fitnessGoals     ?? [];
 
@@ -30,6 +33,7 @@ class OnboardingModel {
     'fitness_goals':     fitnessGoals,
     'mfa_enabled':       mfaEnabled,
     'profile_picture':   profilePicture,
-    'onboarded':         onboarded,  // ADD TO REQUEST
+    'onboarded':         onboarded,
+    'sex':               sex,
   };
 }

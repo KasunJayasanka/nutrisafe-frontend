@@ -62,6 +62,32 @@ class GoalsNotifier extends StateNotifier<AsyncValue<GoalsEditState>> {
     });
   }
 
+  void applyTemplate({
+    required int calories,
+    required int protein,
+    required int carbs,
+    required int fat,
+    required int sodiumMg,
+    required int sugarG,
+    required int hydrationGlasses,
+    required int exerciseMin,
+  }) {
+    state = state.whenData((s) {
+      final updated = s.current.copyWith(
+        calories: calories,
+        protein: protein,
+        carbs: carbs,
+        fat: fat,
+        sodium: sodiumMg,
+        sugar: sugarG,
+        hydration: hydrationGlasses,
+        exercise: exerciseMin,
+      );
+      return s.copy(current: updated, isEditing: true); // enter edit mode
+    });
+  }
+
+
   Future<void> save() async {
     final value = state.valueOrNull;
     if (value == null) return;
@@ -100,3 +126,33 @@ final goalsByDateProvider =
 FutureProvider.family<GoalsResponse, String>((ref, yyyyMmDd) async {
   return ref.read(goalsRepositoryProvider).fetchGoalsByDate(yyyyMmDd);
 });
+
+int _kcalToGrams(double kcal, {required int kcalPerGram}) =>
+    (kcal / kcalPerGram).round();
+
+class TemplateMath {
+  static Map<String, int> compute({
+    required int kcal,
+    required double pPct, // 0.20 = 20%
+    required double cPct,
+    required double fPct,
+    int sodiumCapMg = 2300,
+    int hydrationGlasses = 8,
+    int exerciseMin = 30,
+  }) {
+    final pGr = _kcalToGrams(kcal * pPct, kcalPerGram: 4);
+    final cGr = _kcalToGrams(kcal * cPct, kcalPerGram: 4);
+    final fGr = _kcalToGrams(kcal * fPct, kcalPerGram: 9);
+    final sugarMaxGr = _kcalToGrams(kcal * 0.10, kcalPerGram: 4); // <10% kcal
+    return {
+      'calories': kcal,
+      'protein': pGr,
+      'carbs': cGr,
+      'fat': fGr,
+      'sodium': sodiumCapMg,
+      'sugar': sugarMaxGr,
+      'hydration': hydrationGlasses,
+      'exercise': exerciseMin,
+    };
+  }
+}

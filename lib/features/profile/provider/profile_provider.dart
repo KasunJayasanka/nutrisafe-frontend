@@ -55,6 +55,7 @@ class UpdatePayload {
   final String? fitnessGoals;
   final bool? mfaEnabled;
   final String? profilePictureBase64;
+  final String? sex;
 
   UpdatePayload({
     this.firstName,
@@ -67,6 +68,7 @@ class UpdatePayload {
     this.fitnessGoals,
     this.mfaEnabled,
     this.profilePictureBase64,
+    this.sex,
   });
 }
 
@@ -86,6 +88,7 @@ FutureProvider.autoDispose.family<UserProfile, UpdatePayload>((ref, payload) asy
     fitnessGoals:         payload.fitnessGoals,
     mfaEnabled:           payload.mfaEnabled,
     profilePictureBase64: payload.profilePictureBase64,
+    sex:                  payload.sex,
   );
 });
 

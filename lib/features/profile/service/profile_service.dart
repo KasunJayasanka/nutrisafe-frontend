@@ -33,6 +33,7 @@ class ProfileService {
     String? fitnessGoals,
     bool? mfaEnabled,
     String? profilePictureBase64,
+    String? sex,
   }) async {
     final body = <String, dynamic>{};
     if (firstName        != null) body['first_name']        = firstName;
@@ -47,6 +48,7 @@ class ProfileService {
     if (profilePictureBase64 != null) {
       body['profile_picture'] = profilePictureBase64;
     }
+    if (sex != null) body['sex'] = sex;
 
     await dio.patch(
       '/user/profile',

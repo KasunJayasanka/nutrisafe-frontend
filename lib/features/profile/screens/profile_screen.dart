@@ -18,8 +18,7 @@ import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'package:frontend_v2/features/profile/screens/privacy_security_screen.dart';
 import 'package:frontend_v2/features/profile/provider/notifications_toggle_provider.dart';
-import 'package:frontend_v2/features/profile/provider/profile_provider.dart' show bmiFutureProvider, BmiArgs;
-import 'package:frontend_v2/features/profile/widgets/bmi_card.dart';
+import 'package:frontend_v2/core/enums/sex_option.dart';
 
 
 
@@ -60,15 +59,13 @@ class ProfileContent extends ConsumerStatefulWidget {
 class _ProfileContentState extends ConsumerState<ProfileContent> {
   bool _isEditing = false;
 
-  bool _isDirty   = false;   // ← track if fields changed
-  bool _saving    = false;
-
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   late final TextEditingController _ageController;
   late final TextEditingController _weightController;
   late final TextEditingController _heightController;
   late final TextEditingController _birthdayController;
+  SexOption? _sex;
 
   File? _pickedImage;
   String? _profilePicBase64;
@@ -90,7 +87,7 @@ class _ProfileContentState extends ConsumerState<ProfileContent> {
           : '',
     );
 
-
+    _sex = SexOptionX.fromApi(p.sex);
 
 
   }
@@ -150,7 +147,8 @@ class _ProfileContentState extends ConsumerState<ProfileContent> {
       healthConditions:     /* your health-conditions controller */ '',
       fitnessGoals:         /* your fitness-goals controller     */ '',
       mfaEnabled:           /* your MFA toggle boolean          */ false,
-      profilePictureBase64: _profilePicBase64,   // ← pass your real Base64 here
+      profilePictureBase64: _profilePicBase64,
+      sex: _sex?.api,
 
     );
 
@@ -276,6 +274,8 @@ class _ProfileContentState extends ConsumerState<ProfileContent> {
               birthdayController: _birthdayController,
               heightController: _heightController,
               onBirthdayTap: _selectBirthday,
+              sex: _sex,
+              onSexChanged: (v) => setState(() => _sex = v),
             ),
             const SizedBox(height: 16),
 

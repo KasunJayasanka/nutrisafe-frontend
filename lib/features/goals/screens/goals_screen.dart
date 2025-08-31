@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:frontend_v2/core/theme/app_colors.dart';
-import 'package:frontend_v2/core/widgets/bottom_nav_bar.dart'; // ⬅️ add this
+import 'package:frontend_v2/core/widgets/bottom_nav_bar.dart';
 import 'package:frontend_v2/core/widgets/gradient_app_bar.dart';
 
 import '../provider/goals_provider.dart';
@@ -359,22 +359,40 @@ class GoalsScreen extends HookConsumerWidget {
                     if (!s.isEditing)
                       GoalTemplates(
                         onApply: (key) {
+                          final s = ref.read(goalsNotifierProvider).valueOrNull;
+                          final baseKcal = (s?.current.calories ?? 0) == 0 ? 2000 : s!.current.calories;
+
+                          Map<String, int> tpl;
                           switch (key) {
-                            case 'weight_loss':
-                              notifier.updateField('calories', (s.current.calories * 0.85).round());
-                              notifier.updateField('carbs', (s.current.carbs * 0.9).round());
+                            case 'weight_loss': {
+                              final kcal = (baseKcal * 0.85).round();
+                              tpl = TemplateMath.compute(kcal: kcal, pPct: 0.25, cPct: 0.45, fPct: 0.30);
                               break;
-                            case 'muscle_gain':
-                              notifier.updateField('calories', (s.current.calories * 1.1).round());
-                              notifier.updateField('protein', (s.current.protein * 1.15).round());
+                            }
+                            case 'muscle_gain': {
+                              final kcal = (baseKcal * 1.10).round();
+                              tpl = TemplateMath.compute(kcal: kcal, pPct: 0.25, cPct: 0.50, fPct: 0.25);
                               break;
+                            }
                             case 'maintenance':
-                              break;
+                            default: {
+                              final kcal = baseKcal;
+                              tpl = TemplateMath.compute(kcal: kcal, pPct: 0.20, cPct: 0.50, fPct: 0.30);
+                            }
                           }
-                          notifier.toggleEdit(true);
+
+                          ref.read(goalsNotifierProvider.notifier).applyTemplate(
+                            calories: tpl['calories']!,
+                            protein: tpl['protein']!,
+                            carbs: tpl['carbs']!,
+                            fat: tpl['fat']!,
+                            sodiumMg: tpl['sodium']!,
+                            sugarG: tpl['sugar']!,
+                            hydrationGlasses: tpl['hydration']!,
+                            exerciseMin: tpl['exercise']!,
+                          );
                         },
                       ),
-
                     const SizedBox(height: 16),
                   ],
                 ),

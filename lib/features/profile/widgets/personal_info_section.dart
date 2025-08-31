@@ -5,6 +5,8 @@ import 'package:frontend_v2/core/theme/app_colors.dart';
 import 'package:frontend_v2/features/profile/widgets/bmi_card.dart';
 import 'package:frontend_v2/features/profile/provider/profile_provider.dart'
     show bmiFutureProvider, BmiArgs;
+import 'package:frontend_v2/core/enums/sex_option.dart';
+import 'package:frontend_v2/core/widgets/sex_selector.dart';
 
 class PersonalInfoSection extends ConsumerWidget {
   final bool isEditing;
@@ -14,6 +16,8 @@ class PersonalInfoSection extends ConsumerWidget {
   final TextEditingController weightController;
   final TextEditingController heightController;
   final TextEditingController birthdayController;
+  final SexOption? sex;
+  final ValueChanged<SexOption?> onSexChanged;
 
   final VoidCallback onBirthdayTap;
 
@@ -27,6 +31,8 @@ class PersonalInfoSection extends ConsumerWidget {
     required this.heightController,
     required this.birthdayController,
     required this.onBirthdayTap,
+    required this.sex,                          // ← NEW
+    required this.onSexChanged,
   }) : super(key: key);
 
   // ── Helpers ──────────────────────────────────────────────────────────────
@@ -256,6 +262,40 @@ class PersonalInfoSection extends ConsumerWidget {
                       ),
                     ),
                   ],
+                ),
+
+                const SizedBox(height: 12),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Sex', style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
+                ),
+                const SizedBox(height: 4),
+                isEditing
+                    ? SexSelector(                     // radios when editing
+                  value: sex,
+                  onChanged: onSexChanged,
+                )
+                    : Container(                       // read-only chip/field
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.wc, size: 18, color: AppColors.textSecondary),
+                      const SizedBox(width: 6),
+                      Text(
+                        switch (sex) {
+                          SexOption.male => 'Male',
+                          SexOption.female => 'Female',
+                          SexOption.ratherNotSay => 'Rather not say',
+                          _ => '—',
+                        },
+                        style: const TextStyle(fontSize: 14, color: Colors.black),
+                      ),
+                    ],
+                  ),
                 ),
 
                 // ─── BMI action (aligned with fields) ─────────────────

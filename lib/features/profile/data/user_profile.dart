@@ -17,6 +17,7 @@ class UserProfile {
   final String    profilePicture;
   final bool      disabled;
   final String    userId;
+  final String    sex;
 
   UserProfile({
     required this.id,
@@ -34,6 +35,7 @@ class UserProfile {
     required this.profilePicture,
     required this.disabled,
     required this.userId,
+    required this.sex,
   });
 
   // ─── Convenience getters for your UI ─────────────────
@@ -67,6 +69,7 @@ class UserProfile {
       profilePicture:   json['profile_picture'] as String? ?? '',
       disabled:         false, // Assuming backend doesn't send this
       userId: json['user_id'] as String ?? '',
+      sex:            json['sex'] as String? ?? '',
 
     );
   }
@@ -84,6 +87,7 @@ class UserProfile {
       if (fitnessGoals    .isNotEmpty) 'fitness_goals'     : fitnessGoals,
       if (mfaEnabled      != null)    'mfa_enabled'       : mfaEnabled,
       if (profilePicture  .isNotEmpty) 'profile_picture'   : profilePicture,
+      if (sex.isNotEmpty) 'sex': sex,
     };
   }
 }
