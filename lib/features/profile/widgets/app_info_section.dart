@@ -15,12 +15,12 @@ class AppInfoSection extends StatelessWidget {
         child: Column(
           children: const [
             Text(
-              'HealthTrack v1.0.0',
+              'Nutrivue v1.0.0',
               style: TextStyle(fontSize: 14, color: Colors.black),
             ),
             SizedBox(height: 4),
             Text(
-              'Smart nutrition for athletes',
+              'Manage your diet profile',
               style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
             ),
           ],

@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_v2/core/theme/app_colors.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class PersonalInfoSection extends StatelessWidget {
+import 'package:frontend_v2/core/theme/app_colors.dart';
+import 'package:frontend_v2/features/profile/widgets/bmi_card.dart';
+import 'package:frontend_v2/features/profile/provider/profile_provider.dart'
+    show bmiFutureProvider, BmiArgs;
+import 'package:frontend_v2/core/enums/sex_option.dart';
+import 'package:frontend_v2/core/widgets/sex_selector.dart';
+
+class PersonalInfoSection extends ConsumerWidget {
   final bool isEditing;
   final TextEditingController nameController;
   final TextEditingController emailController;
@@ -9,6 +16,8 @@ class PersonalInfoSection extends StatelessWidget {
   final TextEditingController weightController;
   final TextEditingController heightController;
   final TextEditingController birthdayController;
+  final SexOption? sex;
+  final ValueChanged<SexOption?> onSexChanged;
 
   final VoidCallback onBirthdayTap;
 
@@ -22,9 +31,11 @@ class PersonalInfoSection extends StatelessWidget {
     required this.heightController,
     required this.birthdayController,
     required this.onBirthdayTap,
-
+    required this.sex,                          // ← NEW
+    required this.onSexChanged,
   }) : super(key: key);
 
+  // ── Helpers ──────────────────────────────────────────────────────────────
   Widget _buildReadOnlyField({
     required IconData icon,
     required String value,
@@ -40,9 +51,12 @@ class PersonalInfoSection extends StatelessWidget {
         children: [
           Icon(icon, size: 18, color: AppColors.textSecondary),
           const SizedBox(width: 6),
-          Text(
-            '$value $suffix',
-            style: const TextStyle(fontSize: 14, color: Colors.black),
+          Expanded(
+            child: Text(
+              '$value $suffix',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 14, color: Colors.black),
+            ),
           ),
         ],
       ),
@@ -54,57 +68,62 @@ class PersonalInfoSection extends StatelessWidget {
     required TextInputType keyboardType,
     required String hintText,
   }) {
+    final radius = BorderRadius.circular(8);
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
+      style: const TextStyle(color: Colors.black, fontSize: 14),
       decoration: InputDecoration(
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        filled: true,
+        fillColor: Colors.white,
         hintText: hintText,
+        hintStyle: const TextStyle(color: AppColors.textSecondary),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: radius,
+          borderSide: const BorderSide(color: AppColors.emerald200, width: 1.2),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: radius,
+          borderSide: const BorderSide(color: AppColors.emerald600, width: 1.6),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: radius,
+          borderSide: const BorderSide(color: AppColors.emerald200, width: 1.2),
+        ),
       ),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       color: AppColors.white,
       margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           // ─── Section Header ───────────────────────────
-          ListTile(
-            leading: const Icon(Icons.person, color: AppColors.textSecondary),
-            title: const Text(
+          const ListTile(
+            leading: Icon(Icons.person, color: AppColors.textSecondary),
+            title: Text(
               'Personal Information',
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+                  fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
             ),
           ),
 
+          // ─── Fields ───────────────────────────────────
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Column(
               children: [
-                // ─── Full Name Field ─────────────────────────
-                Align(
+                // Full Name
+                const Align(
                   alignment: Alignment.centerLeft,
-                  child: const Text(
-                    'Full Name',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
+                  child: Text('Full Name',
+                      style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
                 ),
                 const SizedBox(height: 4),
                 isEditing
@@ -118,19 +137,13 @@ class PersonalInfoSection extends StatelessWidget {
                   value: nameController.text.trim(),
                   suffix: '',
                 ),
-
                 const SizedBox(height: 12),
 
-                // ─── Email Field ────────────────────────────
-                Align(
+                // Email
+                const Align(
                   alignment: Alignment.centerLeft,
-                  child: const Text(
-                    'Email',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
+                  child: Text('Email',
+                      style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
                 ),
                 const SizedBox(height: 4),
                 isEditing
@@ -144,25 +157,19 @@ class PersonalInfoSection extends StatelessWidget {
                   value: emailController.text.trim(),
                   suffix: '',
                 ),
-
                 const SizedBox(height: 12),
 
-                // ─── Age & Weight (Side by Side) ───────────
+                // Age & Weight
                 Row(
                   children: [
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Age',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
+                          const Text('Age',
+                              style: TextStyle(
+                                  fontSize: 14, color: AppColors.textSecondary)),
                           const SizedBox(height: 4),
-
                           _buildReadOnlyField(
                             icon: Icons.calendar_today_outlined,
                             value: ageController.text.trim(),
@@ -171,20 +178,14 @@ class PersonalInfoSection extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     const SizedBox(width: 12),
-
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Weight',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
+                          const Text('Weight',
+                              style: TextStyle(
+                                  fontSize: 14, color: AppColors.textSecondary)),
                           const SizedBox(height: 4),
                           isEditing
                               ? _buildEditableField(
@@ -202,27 +203,23 @@ class PersonalInfoSection extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 12),
 
+                // Birthday & Height
                 Row(
                   children: [
-                    // ─── Birthday Column ────────────────────────────────
+                    // Birthday
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Birthday',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
+                          const Text('Birthday',
+                              style: TextStyle(
+                                  fontSize: 14, color: AppColors.textSecondary)),
                           const SizedBox(height: 4),
                           isEditing
                               ? GestureDetector(
-                            onTap: onBirthdayTap,        // ← use the injected callback
+                            onTap: onBirthdayTap,
                             child: AbsorbPointer(
                               child: _buildEditableField(
                                 controller: birthdayController,
@@ -239,21 +236,16 @@ class PersonalInfoSection extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     const SizedBox(width: 12),
 
-                    // ─── Height Column ──────────────────────────────────
+                    // Height
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Height',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
+                          const Text('Height',
+                              style: TextStyle(
+                                  fontSize: 14, color: AppColors.textSecondary)),
                           const SizedBox(height: 4),
                           isEditing
                               ? _buildEditableField(
@@ -272,6 +264,82 @@ class PersonalInfoSection extends StatelessWidget {
                   ],
                 ),
 
+                const SizedBox(height: 12),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Sex',
+                    style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                isEditing
+                    ? SexDropdownField(
+                  value: sex,
+                  onChanged: onSexChanged,
+                  hintText: 'Select sex',
+                )
+                    : _buildReadOnlyField(
+                  icon: Icons.wc,
+                  value: sex?.label ?? '—',  // ← uses your extension
+                  suffix: '',
+                ),
+
+
+                // ─── BMI action (aligned with fields) ─────────────────
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    const Icon(Icons.monitor_weight_outlined,
+                        size: 18, color: AppColors.textSecondary),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Body Mass Index (BMI)',
+                        style: TextStyle(
+                            fontSize: 14, color: AppColors.textSecondary),
+                      ),
+                    ),
+
+
+                  ],
+                ),
+
+                // ─── BMI result card (inside this card) ───────────────
+                const SizedBox(height: 8),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final bmiAsync = ref.watch(bmiFutureProvider(const BmiArgs()));
+                    return bmiAsync.when(
+                      loading: () => const Card(
+                        elevation: 0,
+                        margin: EdgeInsets.zero,
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 18, height: 18,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                              SizedBox(width: 12),
+                              Text('Calculating BMI...'),
+                            ],
+                          ),
+                        ),
+                      ),
+                      error: (e, __) => const Card(
+                        elevation: 0,
+                        margin: EdgeInsets.zero,
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Text('Could not compute BMI'),
+                        ),
+                      ),
+                      data: (result) => BmiCard(result: result),
+                    );
+                  },
+                ),
               ],
             ),
           ),

@@ -9,7 +9,7 @@ class TitleSection extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'HealthTrack',
+          'Nutrivue',
           style: TextStyle(
             fontSize: 40, // ~text-5xl
             fontWeight: FontWeight.bold,
@@ -25,7 +25,7 @@ class TitleSection extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Smart Nutrition for Athletes',
+          'Smart Nutrition Management',
           style: TextStyle(
             fontSize: 20, // text-xl
             fontWeight: FontWeight.w500,
@@ -34,7 +34,7 @@ class TitleSection extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Track your nutrition, analyze food safety, and achieve your health goals',
+          'Track your nutrition, analyze food safety, and achieve your diet goals',
           style: TextStyle(
             fontSize: 14, // text-sm
             color: AppColors.white70,

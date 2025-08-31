@@ -5,6 +5,7 @@ import 'package:frontend_v2/core/theme/app_colors.dart';
 import 'package:frontend_v2/features/profile/provider/mfa_provider.dart';
 import 'package:frontend_v2/features/profile/widgets/security_settings_card.dart';
 import 'package:frontend_v2/features/profile/widgets/privacy_settings_card.dart';
+import 'package:frontend_v2/features/profile/widgets/change_password_card.dart';
 
 class PrivacySecurityScreen extends ConsumerWidget {
   const PrivacySecurityScreen({Key? key}) : super(key: key);
@@ -30,7 +31,8 @@ class PrivacySecurityScreen extends ConsumerWidget {
               onToggle: (v) => mfaNotifier.toggle(v),
             ),
             const SizedBox(height: 16),
-            const PrivacySettingsCard(),
+            ChangePasswordCard(),   // ⬅️ add the new card here
+            SizedBox(height: 16),
           ],
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:frontend_v2/features/auth/widgets/gradient_button.dart';
 import 'goals_section_card.dart';
 import 'gradient_border_section.dart';
 
+
 class ActivityTabsSection extends HookWidget {
   const ActivityTabsSection({
     super.key,

@@ -6,6 +6,7 @@ import 'package:frontend_v2/core/services/secure_storage_service.dart';
 import '../data/food_model.dart';
 import '../data/meal_model.dart';
 import '../data/meal_request.dart';
+import '../data/nutrition_preview.dart';
 
 class MealService {
   final ApiService _api;
@@ -88,5 +89,22 @@ class MealService {
     );
     // the response body is a single JSON object
     return Meal.fromJson(resp.data as Map<String, dynamic>);
+  }
+
+  Future<NutritionPreview> analyzePreview(
+      String foodId,
+      String measureUri,
+      double quantity,
+      ) async {
+    final body = {
+      'food_id': foodId,
+      'measure_uri': measureUri,
+      'quantity': quantity,
+    };
+
+    final Response resp = await _api.post('/food/analyze', body);
+
+    final map = resp.data as Map<String, dynamic>;
+    return NutritionPreview.fromJson(map);
   }
 }

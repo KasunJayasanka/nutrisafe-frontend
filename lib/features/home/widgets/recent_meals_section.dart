@@ -103,7 +103,7 @@ class RecentMealsSection extends StatelessWidget {
                           border: Border.all(color: AppColors.emerald200),
                         ),
                         child: Text(
-                          isSafe ? 'Safe' : 'Check',
+                          isSafe ? 'Safe' : 'Review',
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

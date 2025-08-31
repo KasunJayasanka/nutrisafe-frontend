@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "299161398306",
+    "project_id": "nutrivue-1f8d7",
+    "storage_bucket": "nutrivue-1f8d7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:299161398306:android:8f70b3a48882882a2fae7b",
+        "android_client_info": {
+          "package_name": "com.example.nutri_safe_tracker.frontend_v2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAULG2_wUwCf8n7tqQmLaJQj7g1Lsos83Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

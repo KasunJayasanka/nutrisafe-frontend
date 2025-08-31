@@ -56,7 +56,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'HealthTrack',
+                      'Nutrivue',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

@@ -1,6 +1,7 @@
 // lib/features/meal_logging/provider/meal_provider.dart
 
 import 'package:flutter/cupertino.dart';
+import '../data/nutrition_preview.dart';
 import '../repository/meal_repository.dart';
 import '../data/food_model.dart';
 import '../data/meal_model.dart';
@@ -81,6 +82,14 @@ class MealProvider extends ChangeNotifier {
       return d.year == now.year && d.month == now.month && d.day == now.day;
     }).toList();
     notifyListeners();
+  }
+
+  Future<NutritionPreview> previewNutrition(
+      String foodId,
+      String measureUri,
+      double quantity,
+      ) {
+    return _repo.analyzePreview(foodId, measureUri, quantity);
   }
 }
 

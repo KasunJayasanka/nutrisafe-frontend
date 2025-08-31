@@ -37,7 +37,7 @@ class GoalsService {
       if (hydration != null) 'hydration': hydration,
       if (exercise != null) 'exercise': exercise,
     };
-    return _api.post(
+    return _api.patch(
       '/user/daily-activity',
       payload,
       options: Options(headers: {

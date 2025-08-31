@@ -1,5 +1,6 @@
 // lib/features/meal_logging/repository/meal_repository.dart
 
+import '../data/nutrition_preview.dart';
 import '../service/meal_service.dart';
 import '../data/food_model.dart';
 import '../data/meal_model.dart';
@@ -17,4 +18,9 @@ class MealRepository {
   Future<void> deleteMeal(int id) => _service.deleteMeal(id);
   Future<Meal> getMealById(int id) => _service.getMeal(id);
 
+  Future<NutritionPreview> analyzePreview(
+      String foodId,
+      String measureUri,
+      double quantity,
+      ) => _service.analyzePreview(foodId, measureUri, quantity);
 }
