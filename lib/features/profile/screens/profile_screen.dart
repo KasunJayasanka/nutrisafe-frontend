@@ -87,7 +87,7 @@ class _ProfileContentState extends ConsumerState<ProfileContent> {
           : '',
     );
 
-    _sex = SexOptionX.fromApi(p.sex);
+    _sex = SexOptionX.fromApi(widget.profile.sex);
 
 
   }

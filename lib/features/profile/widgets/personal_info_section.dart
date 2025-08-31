@@ -267,36 +267,24 @@ class PersonalInfoSection extends ConsumerWidget {
                 const SizedBox(height: 12),
                 const Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('Sex', style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
+                  child: Text(
+                    'Sex',
+                    style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                  ),
                 ),
                 const SizedBox(height: 4),
                 isEditing
-                    ? SexSelector(                     // radios when editing
+                    ? SexDropdownField(
                   value: sex,
                   onChanged: onSexChanged,
+                  hintText: 'Select sex',
                 )
-                    : Container(                       // read-only chip/field
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF3F4F6),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.wc, size: 18, color: AppColors.textSecondary),
-                      const SizedBox(width: 6),
-                      Text(
-                        switch (sex) {
-                          SexOption.male => 'Male',
-                          SexOption.female => 'Female',
-                          SexOption.ratherNotSay => 'Rather not say',
-                          _ => '—',
-                        },
-                        style: const TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                    ],
-                  ),
+                    : _buildReadOnlyField(
+                  icon: Icons.wc,
+                  value: sex?.label ?? '—',  // ← uses your extension
+                  suffix: '',
                 ),
+
 
                 // ─── BMI action (aligned with fields) ─────────────────
                 const SizedBox(height: 16),

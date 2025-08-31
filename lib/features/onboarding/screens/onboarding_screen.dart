@@ -188,16 +188,11 @@ class OnboardingScreen extends HookConsumerWidget {
                           ),
                           // Sex
                           const SizedBox(height: 16),
-                          Text(
-                            'Sex *',
-                            style: GoogleFonts.poppins(
-                              fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.black,
-                            ),
+                          Text('Sex *',
+                            style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.black),
                           ),
-// Radios (compact stack)
-                          const SizedBox(height: 16),
-                          const Text('Sex *'),
-                          SexSelector(
+                          const SizedBox(height: 8),
+                          SexDropdownField(
                             value: sex.value,
                             onChanged: (v) => sex.value = v,
                           ),
