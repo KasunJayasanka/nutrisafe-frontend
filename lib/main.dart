@@ -18,7 +18,6 @@ Future<void> main() async {
   await Firebase.initializeApp();
 
   final token = await FirebaseMessaging.instance.getToken();
-  print("🔑 FCM token: $token");
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(ProviderScope(child: MyApp(

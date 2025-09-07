@@ -1,16 +1,127 @@
-# frontend_v2
 
-A Personalized Food Safety and Fitness Tracking System
+---
 
-## Getting Started
+```markdown
+# 📱 Nutrivue Frontend (Flutter)
 
-This project is a starting point for a Flutter application.
+This is the **Flutter frontend** for the Nutrivue application.  
+It provides the mobile user interface for authentication, meal logging, daily nutrition tracking, analytics, goals, onboarding, and profile management.  
 
-A few resources to get you started if this is your first Flutter project:
+The app is built with **feature-first architecture** and a **shared core layer**, powered by **Riverpod**, **Dio**, and **FlutterSecureStorage**.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🖼️ Architecture Overview
+
+![App Architecture](docs/architecture.png)
+
+---
+
+## 📌 Features
+
+- **Authentication**: Login, MFA, and password reset flows.
+- **Home Dashboard**: Goals, nutrient breakdown, alerts, and recent meals.
+- **Meal Logging**: Add meals manually or via AI-powered food recognition.
+- **Goals & Analytics**: Track daily goals, view weekly/monthly summaries.
+- **Notifications**: Push alerts for food safety, reminders, and updates.
+- **Onboarding**: Guided setup with profile, preferences, and MFA toggle.
+- **Profile**: Manage user data, app settings, privacy/security.
+
+---
+
+## 🏗️ Project Structure
+
+```
+
+lib/
+├── core/               # Shared building blocks
+│   ├── providers/      # Riverpod providers (API, storage)
+│   ├── services/       # API + secure storage services
+│   ├── theme/          # Colors, typography, themes
+│   └── widgets/        # Common UI (nav bar, app bar, etc.)
+│
+├── features/           # Feature-first vertical slices
+│   ├── home/           # Dashboard & widgets
+│   ├── auth/           # Login, MFA, forms
+│   ├── meal\_logging/   # Food & meal management
+│   ├── goals/          # Goals tracking, DGA-based estimators
+│   ├── analytics/      # Weekly/monthly charts
+│   ├── notifications/  # Device + alert providers
+│   ├── onboarding/     # Guided setup flow
+│   ├── profile/        # Profile, security, app info
+│   └── splash/         # Splash screen
+│
+├── app.dart            # Root app configuration
+└── main.dart           # Entry point
+
+```
+
+---
+
+## 🔄 Data Flow (Home Dashboard Example)
+
+```
+
+DashboardScreen
+⭢ reads dashboardProvider (FutureProvider)
+⭢ HomeRepository.fetchDashboard(date)
+⭢ HomeService (Dio + token from SecureStorage)
+\- GET /user/goals-by-date
+\- GET /user/nutrient-breakdown-by-date
+\- GET /user/meal-items/recent
+\- GET /user/meals/warnings
+⭢ Repository parses JSON → models, derives alerts → DashboardData
+⭢ Provider returns DashboardData
+⭢ UI renders widgets with typed, UI-ready props
+
+````
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- Flutter SDK (>=3.0)
+- Dart (>=3.0)
+- Android Studio / Xcode setup
+- Backend service running (see NutriSafe Backend)
+
+### 2. Clone the repo
+```bash
+git clone https://github.com/your-username/nutrisafe-frontend.git
+cd nutrisafe-frontend
+````
+
+### 3. Install dependencies
+
+```bash
+flutter pub get
+```
+
+### 4. Configure environment
+
+Create a `.env` file (use [flutter\_dotenv](https://pub.dev/packages/flutter_dotenv)):
+
+```env
+API_BASE_URL=https://your-backend.com/api
+```
+
+### 5. Run the app
+
+```bash
+flutter run
+```
+
+---
+
+## 🛠️ Tech Stack
+
+* **Framework**: Flutter (Dart)
+* **State Management**: Riverpod + hooks
+* **HTTP Client**: Dio
+* **Secure Storage**: flutter\_secure\_storage
+* **Charts**: fl\_chart (or equivalent)
+* **Theming**: Custom AppTheme + AppColors
+
+---
+```
