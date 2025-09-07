@@ -28,7 +28,7 @@ class GoalsHeader extends HookConsumerWidget {
             ),
             const SizedBox(width: 12),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Health Goals', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text('Your Diet Goals', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               Text('Track your daily targets', style: Theme.of(context).textTheme.bodySmall),
             ]),
           ]),
