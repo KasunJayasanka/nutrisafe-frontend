@@ -1,11 +1,7 @@
-
----
-
-```markdown
 # 📱 Nutrivue Frontend (Flutter)
 
 This is the **Flutter frontend** for the Nutrivue application.  
-It provides the mobile user interface for authentication, meal logging, daily nutrition tracking, analytics, goals, onboarding, and profile management.  
+It provides the mobile user interface for authentication, meal logging, daily nutrition tracking, analytics, goals, onboarding, and profile management.
 
 The app is built with **feature-first architecture** and a **shared core layer**, powered by **Riverpod**, **Dio**, and **FlutterSecureStorage**.
 
@@ -32,28 +28,26 @@ The app is built with **feature-first architecture** and a **shared core layer**
 ## 🏗️ Project Structure
 
 ```
-
 lib/
-├── core/               # Shared building blocks
-│   ├── providers/      # Riverpod providers (API, storage)
-│   ├── services/       # API + secure storage services
-│   ├── theme/          # Colors, typography, themes
-│   └── widgets/        # Common UI (nav bar, app bar, etc.)
+├── core/                     # Shared building blocks
+│   ├── providers/            # Riverpod providers (API, storage)
+│   ├── services/             # API + secure storage services
+│   ├── theme/                # Colors, typography, themes
+│   └── widgets/              # Common UI (nav bar, app bar, etc.)
 │
-├── features/           # Feature-first vertical slices
-│   ├── home/           # Dashboard & widgets
-│   ├── auth/           # Login, MFA, forms
-│   ├── meal\_logging/   # Food & meal management
-│   ├── goals/          # Goals tracking, DGA-based estimators
-│   ├── analytics/      # Weekly/monthly charts
-│   ├── notifications/  # Device + alert providers
-│   ├── onboarding/     # Guided setup flow
-│   ├── profile/        # Profile, security, app info
-│   └── splash/         # Splash screen
+├── features/                 # Feature-first vertical slices
+│   ├── home/                 # Dashboard & widgets
+│   ├── auth/                 # Login, MFA, forms
+│   ├── meal_logging/         # Food & meal management
+│   ├── goals/                # Goals tracking, DGA-based estimators
+│   ├── analytics/            # Weekly/monthly charts
+│   ├── notifications/        # Device + alert providers
+│   ├── onboarding/           # Guided setup flow
+│   ├── profile/              # Profile, security, app info
+│   └── splash/               # Splash screen
 │
-├── app.dart            # Root app configuration
-└── main.dart           # Entry point
-
+├── app.dart                  # Root app configuration
+└── main.dart                 # Entry point
 ```
 
 ---
@@ -61,20 +55,18 @@ lib/
 ## 🔄 Data Flow (Home Dashboard Example)
 
 ```
-
 DashboardScreen
-⭢ reads dashboardProvider (FutureProvider)
-⭢ HomeRepository.fetchDashboard(date)
-⭢ HomeService (Dio + token from SecureStorage)
-\- GET /user/goals-by-date
-\- GET /user/nutrient-breakdown-by-date
-\- GET /user/meal-items/recent
-\- GET /user/meals/warnings
-⭢ Repository parses JSON → models, derives alerts → DashboardData
-⭢ Provider returns DashboardData
-⭢ UI renders widgets with typed, UI-ready props
-
-````
+  ⭢ reads dashboardProvider (FutureProvider)
+  ⭢ HomeRepository.fetchDashboard(date)
+  ⭢ HomeService (Dio + token from SecureStorage)
+     - GET /user/goals-by-date
+     - GET /user/nutrient-breakdown-by-date
+     - GET /user/meal-items/recent
+     - GET /user/meals/warnings
+  ⭢ Repository parses JSON → models, derives alerts → DashboardData
+  ⭢ Provider returns DashboardData
+  ⭢ UI renders widgets with typed, UI-ready props
+```
 
 ---
 
@@ -90,24 +82,21 @@ DashboardScreen
 ```bash
 git clone https://github.com/your-username/nutrisafe-frontend.git
 cd nutrisafe-frontend
-````
+```
 
 ### 3. Install dependencies
-
 ```bash
 flutter pub get
 ```
 
 ### 4. Configure environment
-
-Create a `.env` file (use [flutter\_dotenv](https://pub.dev/packages/flutter_dotenv)):
+Create a `.env` file (use flutter_dotenv):
 
 ```env
 API_BASE_URL=https://your-backend.com/api
 ```
 
 ### 5. Run the app
-
 ```bash
 flutter run
 ```
@@ -116,12 +105,9 @@ flutter run
 
 ## 🛠️ Tech Stack
 
-* **Framework**: Flutter (Dart)
-* **State Management**: Riverpod + hooks
-* **HTTP Client**: Dio
-* **Secure Storage**: flutter\_secure\_storage
-* **Charts**: fl\_chart (or equivalent)
-* **Theming**: Custom AppTheme + AppColors
-
----
-```
+- **Framework**: Flutter (Dart)
+- **State Management**: Riverpod + hooks
+- **HTTP Client**: Dio
+- **Secure Storage**: flutter_secure_storage
+- **Charts**: fl_chart (or equivalent)
+- **Theming**: Custom AppTheme + AppColors
