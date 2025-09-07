@@ -3,6 +3,8 @@ import '../data/goals_model.dart';
 import '../data/goals_response.dart';
 import '../repository/goals_repository.dart';
 import '../data/daily_progress_model.dart';
+import 'package:frontend_v2/features/goals/utils/dga_templates.dart';
+
 
 final goalsAsyncProvider = FutureProvider<GoalsResponse>((ref) {
   return ref.read(goalsRepositoryProvider).fetchGoals();
@@ -62,28 +64,19 @@ class GoalsNotifier extends StateNotifier<AsyncValue<GoalsEditState>> {
     });
   }
 
-  void applyTemplate({
-    required int calories,
-    required int protein,
-    required int carbs,
-    required int fat,
-    required int sodiumMg,
-    required int sugarG,
-    required int hydrationGlasses,
-    required int exerciseMin,
-  }) {
+  void applyDgaComputedTemplate(Map<String, int> tpl) {
     state = state.whenData((s) {
       final updated = s.current.copyWith(
-        calories: calories,
-        protein: protein,
-        carbs: carbs,
-        fat: fat,
-        sodium: sodiumMg,
-        sugar: sugarG,
-        hydration: hydrationGlasses,
-        exercise: exerciseMin,
+        calories: tpl['calories']!,
+        protein:  tpl['protein']!,
+        carbs:    tpl['carbs']!,
+        fat:      tpl['fat']!,
+        sodium:   tpl['sodium']!,
+        sugar:    tpl['sugar']!,
+        hydration:tpl['hydration']!,
+        exercise: tpl['exercise']!,
       );
-      return s.copy(current: updated, isEditing: true); // enter edit mode
+      return s.copy(current: updated, isEditing: true);
     });
   }
 
