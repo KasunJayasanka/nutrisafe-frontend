@@ -17,6 +17,9 @@ import 'daily_nutrition_screen.dart';
 import 'goals_history_screen.dart';
 import 'package:frontend_v2/features/auth/widgets/gradient_button.dart';
 import 'package:frontend_v2/features/goals/widgets/exercise_timer_dialog.dart';
+import 'package:frontend_v2/features/profile/provider/profile_provider.dart';
+import 'package:frontend_v2/features/goals/utils/dga_templates.dart';
+
 
 
 class GoalsScreen extends HookConsumerWidget {
@@ -43,6 +46,8 @@ class GoalsScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(goalsNotifierProvider);
     final notifier = ref.read(goalsNotifierProvider.notifier);
+
+    final profileAsync = ref.watch(profileFutureProvider);
 
     final hydrationCtl = useTextEditingController();
     final exerciseCtl = useTextEditingController();
@@ -358,39 +363,45 @@ class GoalsScreen extends HookConsumerWidget {
 
                     if (!s.isEditing)
                       GoalTemplates(
-                        onApply: (key) {
-                          final s = ref.read(goalsNotifierProvider).valueOrNull;
-                          final baseKcal = (s?.current.calories ?? 0) == 0 ? 2000 : s!.current.calories;
-
-                          Map<String, int> tpl;
-                          switch (key) {
-                            case 'weight_loss': {
-                              final kcal = (baseKcal * 0.85).round();
-                              tpl = TemplateMath.compute(kcal: kcal, pPct: 0.25, cPct: 0.45, fPct: 0.30);
-                              break;
-                            }
-                            case 'muscle_gain': {
-                              final kcal = (baseKcal * 1.10).round();
-                              tpl = TemplateMath.compute(kcal: kcal, pPct: 0.25, cPct: 0.50, fPct: 0.25);
-                              break;
-                            }
-                            case 'maintenance':
-                            default: {
-                              final kcal = baseKcal;
-                              tpl = TemplateMath.compute(kcal: kcal, pPct: 0.20, cPct: 0.50, fPct: 0.30);
-                            }
+                        onApply: (key) async {
+                          // 1) Get profile (bail if not loaded)
+                          final profile = ref.read(profileFutureProvider).maybeWhen(
+                            data: (p) => p,
+                            orElse: () => null,
+                          );
+                          if (profile == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Profile not loaded yet')),
+                            );
+                            return;
                           }
 
-                          ref.read(goalsNotifierProvider.notifier).applyTemplate(
-                            calories: tpl['calories']!,
-                            protein: tpl['protein']!,
-                            carbs: tpl['carbs']!,
-                            fat: tpl['fat']!,
-                            sodiumMg: tpl['sodium']!,
-                            sugarG: tpl['sugar']!,
-                            hydrationGlasses: tpl['hydration']!,
-                            exerciseMin: tpl['exercise']!,
+                          // 2) Choose an activity level. You can replace this with a small dialog.
+                          final activity = ActivityLevel.moderatelyActive;
+
+                          // 3) Map key -> DgaTemplateKey
+                          DgaTemplateKey tplKey;
+                          switch (key) {
+                            case 'dga_maint':   tplKey = DgaTemplateKey.maintenanceUSStyle; break;
+                            case 'dga_cut':     tplKey = DgaTemplateKey.weightLossModerate; break;
+                            case 'dga_gain':    tplKey = DgaTemplateKey.muscleGainModerate; break;
+                            case 'dga_med':     tplKey = DgaTemplateKey.mediterraneanStyle; break;
+                            case 'dga_veg':     tplKey = DgaTemplateKey.vegetarianStyle; break;
+                            case 'dga_preg_t2': tplKey = DgaTemplateKey.pregnancyTrimester2; break;
+                            case 'dga_preg_t3': tplKey = DgaTemplateKey.pregnancyTrimester3; break;
+                            case 'dga_lac_1':   tplKey = DgaTemplateKey.lactationFirst6mo; break;
+                            case 'dga_lac_2':   tplKey = DgaTemplateKey.lactationSecond6mo; break;
+                            default:            tplKey = DgaTemplateKey.maintenanceUSStyle;
+                          }
+
+                          // 4) Build full template and apply
+                          final tpl = buildDgaTemplate(
+                            profile: profile,
+                            activityLevel: activity,
+                            key: tplKey,
                           );
+
+                          ref.read(goalsNotifierProvider.notifier).applyDgaComputedTemplate(tpl);
                         },
                       ),
                     const SizedBox(height: 16),
